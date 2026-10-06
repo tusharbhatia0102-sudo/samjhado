@@ -1,374 +1,522 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SamjhaDo — Simple. Clear. Explained.</title>
 
-  <title>SamjhaDo — Samajhna Hai? Photo Bhejo.</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #08080d;
+    color: #ffffff;
+    min-height: 100vh;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #0b0b12;
-      color: white;
-      min-height: 100vh;
-    }
+.container {
+    width: 92%;
+    max-width: 1050px;
+    margin: auto;
+}
+
+/* HEADER */
+
+header {
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    color: #9b6cff;
+}
+
+.badge {
+    font-size: 12px;
+    padding: 7px 12px;
+    border: 1px solid #292938;
+    border-radius: 30px;
+    color: #bdbdcc;
+}
+
+/* HERO */
+
+.hero {
+    text-align: center;
+    padding: 65px 0 35px;
+}
+
+.hero h1 {
+    font-size: clamp(38px, 7vw, 72px);
+    line-height: 1.02;
+    letter-spacing: -3px;
+    max-width: 800px;
+    margin: auto;
+}
+
+.gradient {
+    background: linear-gradient(90deg, #9b6cff, #d78cff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.hero p {
+    color: #a4a4b4;
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 620px;
+    margin: 22px auto 0;
+}
+
+/* UPLOAD */
+
+.upload-box {
+    margin: 38px auto;
+    max-width: 720px;
+    background: #101016;
+    border: 1px solid #292936;
+    border-radius: 25px;
+    padding: 35px;
+    text-align: center;
+}
+
+.upload-icon {
+    width: 65px;
+    height: 65px;
+    border-radius: 18px;
+    background: #1b1728;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 18px;
+}
+
+.upload-box h2 {
+    font-size: 22px;
+    margin-bottom: 9px;
+}
+
+.upload-box p {
+    color: #858595;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.choose-btn {
+    display: inline-block;
+    cursor: pointer;
+    padding: 14px 25px;
+    border-radius: 13px;
+    background: #9b6cff;
+    color: white;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.choose-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* PREVIEW */
+
+#previewArea {
+    display: none;
+    margin-top: 25px;
+}
+
+#previewImage {
+    max-width: 100%;
+    max-height: 350px;
+    border-radius: 16px;
+    border: 1px solid #30303d;
+}
+
+.analyze-btn {
+    margin-top: 18px;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 13px;
+    background: #ffffff;
+    color: #08080d;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.analyze-btn:hover {
+    opacity: 0.9;
+}
+
+/* RESULT */
+
+#result {
+    display: none;
+    margin: 25px auto;
+    max-width: 720px;
+    background: #111119;
+    border: 1px solid #292936;
+    border-radius: 20px;
+    padding: 25px;
+}
+
+#result h3 {
+    margin-bottom: 12px;
+}
+
+#result p {
+    color: #b4b4c2;
+    line-height: 1.6;
+}
+
+/* USE CASES */
+
+.section-title {
+    text-align: center;
+    margin: 70px 0 25px;
+}
+
+.section-title h2 {
+    font-size: 30px;
+}
+
+.section-title p {
+    color: #858595;
+    margin-top: 8px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 70px;
+}
+
+.card {
+    background: #101016;
+    border: 1px solid #242430;
+    border-radius: 18px;
+    padding: 22px;
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: #6045a0;
+}
+
+.card-icon {
+    font-size: 26px;
+    margin-bottom: 16px;
+}
+
+.card h3 {
+    font-size: 16px;
+    margin-bottom: 7px;
+}
+
+.card p {
+    color: #858595;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* HOW IT WORKS */
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 70px;
+}
+
+.step {
+    text-align: center;
+    padding: 25px;
+}
+
+.number {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #1c1730;
+    color: #b695ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto auto 15px;
+    font-weight: 800;
+}
+
+.step h3 {
+    margin-bottom: 8px;
+}
+
+.step p {
+    color: #858595;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* FOOTER */
+
+footer {
+    border-top: 1px solid #20202a;
+    padding: 25px 0;
+    text-align: center;
+    color: #666675;
+    font-size: 13px;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
 
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 22px 7%;
-      border-bottom: 1px solid #22222d;
-    }
-
-    .logo {
-      font-size: 25px;
-      font-weight: 800;
-    }
-
-    .logo span {
-      color: #8b5cf6;
-    }
-
-    .badge {
-      background: #171522;
-      border: 1px solid #30294a;
-      padding: 8px 13px;
-      border-radius: 30px;
-      font-size: 13px;
-      color: #c4b5fd;
+        padding: 18px 0;
     }
 
     .hero {
-      max-width: 900px;
-      margin: auto;
-      text-align: center;
-      padding: 75px 20px 35px;
+        padding-top: 45px;
     }
 
     .hero h1 {
-      font-size: clamp(42px, 8vw, 75px);
-      line-height: 1;
-      margin-bottom: 22px;
-      letter-spacing: -3px;
-    }
-
-    .hero h1 span {
-      color: #8b5cf6;
+        letter-spacing: -2px;
     }
 
     .hero p {
-      color: #aaa9b7;
-      font-size: 18px;
-      line-height: 1.6;
-      max-width: 650px;
-      margin: auto;
+        font-size: 15px;
     }
 
     .upload-box {
-      max-width: 650px;
-      margin: 40px auto 20px;
-      padding: 45px 25px;
-      border: 2px dashed #393346;
-      border-radius: 24px;
-      background: #11111a;
-      transition: 0.2s;
-    }
-
-    .upload-box:hover {
-      border-color: #8b5cf6;
-      transform: translateY(-2px);
-    }
-
-    .upload-icon {
-      font-size: 48px;
-      margin-bottom: 15px;
-    }
-
-    .upload-box h2 {
-      margin-bottom: 10px;
-    }
-
-    .upload-box p {
-      color: #858391;
-      margin-bottom: 22px;
-    }
-
-    .upload-btn {
-      display: inline-block;
-      background: #8b5cf6;
-      color: white;
-      padding: 14px 25px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      font-size: 16px;
-    }
-
-    .upload-btn:hover {
-      background: #7c3aed;
-    }
-
-    #fileInput {
-      display: none;
-    }
-
-    #preview {
-      max-width: 100%;
-      max-height: 300px;
-      border-radius: 15px;
-      margin-top: 20px;
-      display: none;
-    }
-
-    .categories {
-      max-width: 900px;
-      margin: 35px auto 80px;
-      padding: 0 20px;
-    }
-
-    .categories h2 {
-      text-align: center;
-      margin-bottom: 22px;
+        padding: 25px 18px;
     }
 
     .cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-    }
-
-    .card {
-      background: #11111a;
-      border: 1px solid #22222d;
-      border-radius: 16px;
-      padding: 22px 15px;
-      text-align: center;
-      transition: 0.2s;
-    }
-
-    .card:hover {
-      border-color: #8b5cf6;
-      transform: translateY(-3px);
-    }
-
-    .card .emoji {
-      font-size: 30px;
-      margin-bottom: 10px;
-    }
-
-    .card h3 {
-      font-size: 15px;
-    }
-
-    .card p {
-      color: #777583;
-      font-size: 12px;
-      margin-top: 7px;
-    }
-
-    .how {
-      text-align: center;
-      max-width: 850px;
-      margin: 0 auto 80px;
-      padding: 0 20px;
-    }
-
-    .how h2 {
-      margin-bottom: 30px;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
-
-    .step {
-      padding: 25px;
-      background: #11111a;
-      border-radius: 16px;
-      border: 1px solid #22222d;
-    }
-
-    .number {
-      display: inline-flex;
-      width: 35px;
-      height: 35px;
-      align-items: center;
-      justify-content: center;
-      background: #8b5cf6;
-      border-radius: 50%;
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
-
-    .step p {
-      color: #858391;
-      font-size: 14px;
-      margin-top: 7px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 25px;
-      border-top: 1px solid #22222d;
-      color: #666571;
-      font-size: 13px;
-    }
-
-    @media (max-width: 700px) {
-      .cards {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .steps {
         grid-template-columns: 1fr;
-      }
-
-      .hero {
-        padding-top: 55px;
-      }
-
-      header {
-        padding: 18px 5%;
-      }
     }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
+<div class="container">
+
 <header>
-  <div class="logo">Samjha<span>Do</span></div>
-  <div class="badge">Simple. Smart. Useful.</div>
+    <div class="logo">Samjha<span>Do</span></div>
+    <div class="badge">AI Assistant</div>
 </header>
 
 <section class="hero">
 
-  <h1>Samajh Nahi Aa Raha?<br><span>Photo Bhejo.</span></h1>
+    <h1>
+        Jo samajh nahi aa raha,
+        <span class="gradient">SamjhaDo.</span>
+    </h1>
 
-  <p>
-    Bill, document, screenshot, notification ya koi offer —
-    photo upload karo aur simple language mein samjho.
-  </p>
+    <p>
+        Bills, documents, screenshots aur everyday problems ko
+        simple language mein samjho — bina complicated words ke.
+    </p>
 
-  <div class="upload-box">
+</section>
 
-    <div class="upload-icon">📸</div>
+<section class="upload-box">
 
-    <h2>Upload Your Photo</h2>
+    <div class="upload-icon">✦</div>
 
-    <p>Jis cheez ko samajhna hai uski clear photo select karo.</p>
+    <h2>Upload something</h2>
 
-    <label for="fileInput" class="upload-btn">
-      Choose Photo
+    <p>
+        Photo ya screenshot upload karo aur SamjhaDo se
+        simple explanation pao.
+    </p>
+
+    <label for="fileInput" class="choose-btn">
+        📷 Choose Photo
     </label>
 
-    <input type="file" id="fileInput" accept="image/*">
+    <input
+        type="file"
+        id="fileInput"
+        accept="image/*"
+    >
 
-    <img id="preview" alt="Selected image preview">
+    <div id="previewArea">
 
-  </div>
+        <img id="previewImage">
+
+        <button class="analyze-btn" onclick="analyzeImage()">
+            ✨ Understand This
+        </button>
+
+    </div>
 
 </section>
 
-<section class="categories">
+<div id="result">
 
-  <h2>What can you understand?</h2>
+    <h3>🧠 SamjhaDo</h3>
 
-  <div class="cards">
+    <p id="resultText">
+        Your image is ready to be analyzed.
+    </p>
 
-    <div class="card">
-      <div class="emoji">🧾</div>
-      <h3>Bills & Receipts</h3>
-      <p>Charges aur totals samjho</p>
+</div>
+
+<section>
+
+    <div class="section-title">
+
+        <h2>What can you understand?</h2>
+
+        <p>Everyday things, made simple.</p>
+
     </div>
 
-    <div class="card">
-      <div class="emoji">📄</div>
-      <h3>Documents</h3>
-      <p>Important information samjho</p>
-    </div>
+    <div class="cards">
 
-    <div class="card">
-      <div class="emoji">🔔</div>
-      <h3>Notifications</h3>
-      <p>Errors aur messages samjho</p>
-    </div>
+        <div class="card">
+            <div class="card-icon">🧾</div>
+            <h3>Bills</h3>
+            <p>Understand charges, totals, taxes and important details.</p>
+        </div>
 
-    <div class="card">
-      <div class="emoji">🛒</div>
-      <h3>Offers</h3>
-      <p>Deal actually worth it hai?</p>
-    </div>
+        <div class="card">
+            <div class="card-icon">📄</div>
+            <h3>Documents</h3>
+            <p>Turn confusing documents into simple explanations.</p>
+        </div>
 
-  </div>
+        <div class="card">
+            <div class="card-icon">📱</div>
+            <h3>Screenshots</h3>
+            <p>Understand confusing messages, notifications and screens.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">💡</div>
+            <h3>Everyday Problems</h3>
+            <p>Get simple explanations for things you don't understand.</p>
+        </div>
+
+    </div>
 
 </section>
 
-<section class="how">
+<section>
 
-  <h2>How It Works</h2>
+    <div class="section-title">
 
-  <div class="steps">
+        <h2>How it works</h2>
 
-    <div class="step">
-      <div class="number">1</div>
-      <h3>Upload</h3>
-      <p>Photo ya screenshot upload karo.</p>
+        <p>Three simple steps.</p>
+
     </div>
 
-    <div class="step">
-      <div class="number">2</div>
-      <h3>Understand</h3>
-      <p>SamjhaDo important information identify karega.</p>
-    </div>
+    <div class="steps">
 
-    <div class="step">
-      <div class="number">3</div>
-      <h3>Take Action</h3>
-      <p>Simple language mein next step samjho.</p>
-    </div>
+        <div class="step">
+            <div class="number">1</div>
+            <h3>Upload</h3>
+            <p>Upload a photo or screenshot.</p>
+        </div>
 
-  </div>
+        <div class="step">
+            <div class="number">2</div>
+            <h3>Understand</h3>
+            <p>AI reads and understands what is shown.</p>
+        </div>
+
+        <div class="step">
+            <div class="number">3</div>
+            <h3>Take Action</h3>
+            <p>Get a simple explanation of what you should do next.</p>
+        </div>
+
+    </div>
 
 </section>
 
 <footer>
-  © 2026 SamjhaDo · Making confusing things simple.
+    © 2026 SamjhaDo — Simple. Clear. Explained.
 </footer>
+
+</div>
 
 <script>
 
-  const fileInput = document.getElementById("fileInput");
-  const preview = document.getElementById("preview");
+const fileInput = document.getElementById("fileInput");
+const previewArea = document.getElementById("previewArea");
+const previewImage = document.getElementById("previewImage");
+const result = document.getElementById("result");
+const resultText = document.getElementById("resultText");
 
-  fileInput.addEventListener("change", function () {
+fileInput.addEventListener("change", function () {
 
     const file = this.files[0];
 
-    if (file) {
+    if (!file) return;
 
-      const reader = new FileReader();
-
-      reader.onload = function (event) {
-        preview.src = event.target.result;
-        preview.style.display = "block";
-      };
-
-      reader.readAsDataURL(file);
+    if (!file.type.startsWith("image/")) {
+        alert("Please select an image.");
+        return;
     }
 
-  });
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+
+        previewImage.src = e.target.result;
+
+        previewArea.style.display = "block";
+
+        result.style.display = "none";
+
+    };
+
+    reader.readAsDataURL(file);
+
+});
+
+function analyzeImage() {
+
+    result.style.display = "block";
+
+    resultText.innerHTML =
+        "Your image has been uploaded successfully. 🤖<br><br>" +
+        "<b>AI analysis is the next part we are connecting.</b><br>" +
+        "Once the AI system is connected, SamjhaDo will read this image and explain it in simple language.";
+
+    result.scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
 
 </script>
 
