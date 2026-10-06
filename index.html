@@ -25,8 +25,6 @@ body {
     margin: auto;
 }
 
-/* HEADER */
-
 header {
     padding: 24px 0;
     display: flex;
@@ -51,8 +49,6 @@ header {
     border-radius: 30px;
     color: #bdbdcc;
 }
-
-/* HERO */
 
 .hero {
     text-align: center;
@@ -80,8 +76,6 @@ header {
     max-width: 620px;
     margin: 22px auto 0;
 }
-
-/* UPLOAD */
 
 .upload-box {
     margin: 38px auto;
@@ -136,8 +130,6 @@ input[type="file"] {
     opacity: 0.9;
 }
 
-/* PREVIEW */
-
 #previewArea {
     display: none;
     margin-top: 25px;
@@ -167,8 +159,6 @@ input[type="file"] {
     opacity: 0.9;
 }
 
-/* RESULT */
-
 #result {
     display: none;
     margin: 25px auto;
@@ -187,8 +177,6 @@ input[type="file"] {
     color: #b4b4c2;
     line-height: 1.6;
 }
-
-/* USE CASES */
 
 .section-title {
     text-align: center;
@@ -240,8 +228,6 @@ input[type="file"] {
     line-height: 1.5;
 }
 
-/* HOW IT WORKS */
-
 .steps {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -277,8 +263,6 @@ input[type="file"] {
     line-height: 1.5;
 }
 
-/* FOOTER */
-
 footer {
     border-top: 1px solid #20202a;
     padding: 25px 0;
@@ -286,8 +270,6 @@ footer {
     color: #666675;
     font-size: 13px;
 }
-
-/* MOBILE */
 
 @media (max-width: 700px) {
 
@@ -368,7 +350,7 @@ footer {
 
     <div id="previewArea">
 
-        <img id="previewImage">
+        <img id="previewImage" alt="Uploaded image">
 
         <button class="analyze-btn" onclick="analyzeImage()">
             ✨ Understand This
@@ -391,11 +373,8 @@ footer {
 <section>
 
     <div class="section-title">
-
         <h2>What can you understand?</h2>
-
         <p>Everyday things, made simple.</p>
-
     </div>
 
     <div class="cards">
@@ -431,11 +410,8 @@ footer {
 <section>
 
     <div class="section-title">
-
         <h2>How it works</h2>
-
         <p>Three simple steps.</p>
-
     </div>
 
     <div class="steps">
@@ -476,6 +452,9 @@ const previewImage = document.getElementById("previewImage");
 const result = document.getElementById("result");
 const resultText = document.getElementById("resultText");
 
+const WORKER_URL =
+    "https://samjhado-ai.tusharbhatia0102.workers.dev/";
+
 fileInput.addEventListener("change", function () {
 
     const file = this.files[0];
@@ -503,18 +482,85 @@ fileInput.addEventListener("change", function () {
 
 });
 
-function analyzeImage() {
+async function analyzeImage() {
+
+    const image = previewImage.src;
+
+    if (!image) {
+        alert("Please upload an image first.");
+        return;
+    }
 
     result.style.display = "block";
 
     resultText.innerHTML =
-        "Your image has been uploaded successfully. 🤖<br><br>" +
-        "<b>AI analysis is the next part we are connecting.</b><br>" +
-        "Once the AI system is connected, SamjhaDo will read this image and explain it in simple language.";
+        "🤖 SamjhaDo AI image ko samajh raha hai..." +
+        "<br><br>Thoda wait karo.";
 
     result.scrollIntoView({
         behavior: "smooth"
     });
+
+    try {
+
+        const response = await fetch(WORKER_URL, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                image: image
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "AI analysis failed."
+            );
+        }
+
+        const answer =
+            data.response ||
+            data.result ||
+            data.text ||
+            "AI ne response nahi diya.";
+
+        resultText.innerHTML =
+            formatAIResponse(answer);
+
+    } catch (error) {
+
+        resultText.innerHTML =
+            "❌ Kuch problem aa gayi." +
+            "<br><br>" +
+            "<b>Error:</b> " +
+            escapeHTML(error.message);
+
+    }
+
+}
+
+function formatAIResponse(text) {
+
+    return escapeHTML(String(text))
+        .replace(/\n/g, "<br>");
+
+}
+
+function escapeHTML(text) {
+
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
 
