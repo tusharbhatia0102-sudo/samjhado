@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>SamjhaDo - AI Assistant</title>
 
 <style>
-
 * {
     margin: 0;
     padding: 0;
@@ -320,8 +317,6 @@ footer {
     font-size: 13px;
 }
 
-/* Small familiar AI animation */
-
 .thinking {
     display: inline-flex;
     align-items: center;
@@ -350,7 +345,6 @@ footer {
 }
 
 @keyframes thinking {
-
     0%, 60%, 100% {
         opacity: 0.3;
         transform: translateY(0);
@@ -360,7 +354,6 @@ footer {
         opacity: 1;
         transform: translateY(-3px);
     }
-
 }
 
 @media(max-width:700px) {
@@ -392,11 +385,8 @@ footer {
     .message-bubble {
         max-width: 90%;
     }
-
 }
-
 </style>
-
 </head>
 
 <body>
@@ -404,7 +394,6 @@ footer {
 <div class="container">
 
 <header>
-
     <div class="logo">
         Samjha<span>Do</span>
     </div>
@@ -412,9 +401,7 @@ footer {
     <div class="badge">
         AI Assistant
     </div>
-
 </header>
-
 
 <section class="hero">
 
@@ -431,9 +418,6 @@ footer {
 
 </section>
 
-
-<!-- CHAT -->
-
 <div class="chat-box">
 
     <div class="messages" id="messages">
@@ -443,6 +427,7 @@ footer {
             <div class="message-bubble">
 
                 Bhai 👋 main SamjhaDo hoon.
+
                 <br><br>
 
                 Kuch bhi samajh nahi aa raha ho toh pooch le —
@@ -454,29 +439,23 @@ footer {
 
     </div>
 
-
     <div class="input-area">
 
         <textarea
             id="messageInput"
             placeholder="Kuch bhi poochho..."
-            rows="1"
-        ></textarea>
+            rows="1"></textarea>
 
         <button
             class="send-btn"
             id="sendBtn"
-            type="button"
-        >
+            type="button">
             Send
         </button>
 
     </div>
 
 </div>
-
-
-<!-- PHOTO -->
 
 <div class="photo-section">
 
@@ -489,56 +468,43 @@ footer {
     </h2>
 
     <p>
-        Bill, document, homework, screenshot, form, notice
-        ya koi bhi readable photo upload karo.
+        Bill, document, homework, screenshot, form,
+        notice ya koi bhi readable photo upload karo.
     </p>
-
 
     <label
         for="photoInput"
-        class="choose-btn"
-    >
+        class="choose-btn">
         📷 Choose Photo
     </label>
-
 
     <input
         type="file"
         id="photoInput"
-        accept="image/*"
-    >
-
+        accept="image/*">
 
     <div id="previewArea">
 
         <img
             id="previewImage"
-            alt="Selected image"
-        >
-
+            alt="Selected image">
 
         <input
             type="text"
             id="photoQuestion"
             class="photo-question"
-            placeholder="Is photo ke baare mein kya jaan na hai?"
-        >
-
+            placeholder="Is photo ke baare mein kya jaan na hai?">
 
         <button
             type="button"
             class="analyze-btn"
-            id="analyzeBtn"
-        >
+            id="analyzeBtn">
             🔍 SamjhaDo
         </button>
 
     </div>
 
 </div>
-
-
-<!-- FEATURES -->
 
 <div class="section-title">
 
@@ -551,7 +517,6 @@ footer {
     </p>
 
 </div>
-
 
 <div class="cards">
 
@@ -572,7 +537,6 @@ footer {
 
     </div>
 
-
     <div class="card">
 
         <div class="card-icon">
@@ -590,7 +554,6 @@ footer {
 
     </div>
 
-
     <div class="card">
 
         <div class="card-icon">
@@ -607,7 +570,6 @@ footer {
         </p>
 
     </div>
-
 
     <div class="card">
 
@@ -628,14 +590,12 @@ footer {
 
 </div>
 
-
 <div class="memory-note">
 
-    🧠 SamjhaDo recent conversation context ko limited time tak yaad
-    rakh sakta hai, taaki follow-up questions easily pooch sako.
+    🧠 SamjhaDo recent conversation context ko limited time tak
+    yaad rakh sakta hai, taaki follow-up questions easily pooch sako.
 
 </div>
-
 
 <footer>
 
@@ -645,7 +605,6 @@ footer {
 
 </div>
 
-
 <script>
 
 const WORKER_URL =
@@ -654,8 +613,43 @@ const WORKER_URL =
 const MEMORY_KEY =
     "samjhado_conversation_memory";
 
+const SESSION_KEY =
+    "samjhado_session_id";
+
 const MEMORY_TIME =
     7 * 24 * 60 * 60 * 1000;
+
+
+/* -----------------------------
+   SESSION ID
+----------------------------- */
+
+function getSessionId() {
+
+    let sessionId =
+        localStorage.getItem(SESSION_KEY);
+
+    if (!sessionId) {
+
+        sessionId =
+            crypto.randomUUID();
+
+        localStorage.setItem(
+            SESSION_KEY,
+            sessionId
+        );
+    }
+
+    return sessionId;
+}
+
+const SESSION_ID =
+    getSessionId();
+
+
+/* -----------------------------
+   VARIABLES
+----------------------------- */
 
 let selectedImage = null;
 
@@ -664,9 +658,9 @@ let photoBusy = false;
 let chatBusy = false;
 
 
-// ========================================
-// MEMORY
-// ========================================
+/* -----------------------------
+   LOCAL MEMORY
+----------------------------- */
 
 function loadMemory() {
 
@@ -674,17 +668,23 @@ function loadMemory() {
 
         const saved =
             JSON.parse(
-                localStorage.getItem(MEMORY_KEY)
+                localStorage.getItem(
+                    MEMORY_KEY
+                )
             );
 
-        if (!saved) return [];
+        if (!saved) {
+            return [];
+        }
 
         if (
-            Date.now() - saved.updatedAt >
-            MEMORY_TIME
+            Date.now() - saved.updatedAt
+            > MEMORY_TIME
         ) {
 
-            localStorage.removeItem(MEMORY_KEY);
+            localStorage.removeItem(
+                MEMORY_KEY
+            );
 
             return [];
         }
@@ -695,7 +695,6 @@ function loadMemory() {
 
         return [];
     }
-
 }
 
 
@@ -709,7 +708,8 @@ function saveMemory(messages) {
 
             JSON.stringify({
 
-                updatedAt: Date.now(),
+                updatedAt:
+                    Date.now(),
 
                 messages:
                     messages.slice(-20)
@@ -719,7 +719,6 @@ function saveMemory(messages) {
         );
 
     } catch {}
-
 }
 
 
@@ -727,23 +726,32 @@ let conversation =
     loadMemory();
 
 
-// ========================================
-// MESSAGE
-// ========================================
+/* -----------------------------
+   ADD MESSAGE
+----------------------------- */
 
-function addMessage(text, type) {
+function addMessage(
+    text,
+    type
+) {
 
     const messages =
-        document.getElementById("messages");
+        document.getElementById(
+            "messages"
+        );
 
     const wrapper =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     wrapper.className =
         "message " + type;
 
     const bubble =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     bubble.className =
         "message-bubble";
@@ -751,46 +759,64 @@ function addMessage(text, type) {
     bubble.innerHTML =
         formatText(text);
 
-    wrapper.appendChild(bubble);
+    wrapper.appendChild(
+        bubble
+    );
 
-    messages.appendChild(wrapper);
+    messages.appendChild(
+        wrapper
+    );
 
     messages.scrollTop =
         messages.scrollHeight;
 
     return bubble;
-
 }
 
 
-// ========================================
-// TEXT FORMAT
-// ========================================
+/* -----------------------------
+   FORMAT TEXT
+----------------------------- */
 
 function formatText(text) {
 
-    if (!text) return "";
+    if (!text) {
+        return "";
+    }
 
     return String(text)
 
-        .replace(/&/g, "&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-        .replace(/</g, "&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-        .replace(/>/g, "&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-        .replace(/\n/g, "<br>");
-
+        .replace(
+            /\n/g,
+            "<br>"
+        );
 }
 
 
-// ========================================
-// CHAT
-// ========================================
+/* -----------------------------
+   SEND CHAT MESSAGE
+----------------------------- */
 
 async function sendMessage() {
 
-    if (chatBusy) return;
+    if (chatBusy) {
+        return;
+    }
 
     const input =
         document.getElementById(
@@ -805,13 +831,17 @@ async function sendMessage() {
     const message =
         input.value.trim();
 
-    if (!message) return;
+    if (!message) {
+        return;
+    }
+
 
     chatBusy = true;
 
     sendBtn.disabled = true;
 
     input.value = "";
+
 
     addMessage(
         message,
@@ -830,7 +860,9 @@ async function sendMessage() {
     });
 
 
-    saveMemory(conversation);
+    saveMemory(
+        conversation
+    );
 
 
     const loading =
@@ -841,63 +873,55 @@ async function sendMessage() {
 
 
     loading.innerHTML = `
+
         <span class="thinking">
+
             Soch raha hoon bhai... 🤔
+
             <span class="thinking-dots">
+
                 <span></span>
                 <span></span>
                 <span></span>
+
             </span>
+
         </span>
+
     `;
 
 
     try {
 
-        const history =
-            conversation
-
-                .slice(-10)
-
-                .map(item =>
-                    `${item.role}: ${item.content}`
-                )
-
-                .join("\n");
-
-
-        const finalMessage =
-`Previous conversation:
-${history}
-
-Current question:
-${message}
-
-Answer naturally in simple Hinglish.
-Agar useful ho toh step-by-step explain karo.
-User ko unnecessarily repeat karne ko mat bolo.`;
-
-
         const response =
             await fetch(
+
                 WORKER_URL,
+
                 {
 
                     method: "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        message:
-                            finalMessage
+                            message:
+                                message,
 
-                    })
+                            sessionId:
+                                SESSION_ID
+
+                        })
 
                 }
+
             );
 
 
@@ -906,11 +930,17 @@ User ko unnecessarily repeat karne ko mat bolo.`;
 
 
         const answer =
+
             data.response ||
+
             data.result?.response ||
+
             data.text ||
+
             data.result?.text ||
+
             data.error ||
+
             "AI ne response nahi diya.";
 
 
@@ -920,22 +950,31 @@ User ko unnecessarily repeat karne ko mat bolo.`;
 
         conversation.push({
 
-            role: "assistant",
+            role:
+                "assistant",
 
-            content: answer,
+            content:
+                answer,
 
-            time: Date.now()
+            time:
+                Date.now()
 
         });
 
 
-        saveMemory(conversation);
+        saveMemory(
+            conversation
+        );
 
 
     } catch (error) {
 
         loading.innerHTML =
-            "Bhai, AI se connection mein problem aa gayi 😭<br><br>" +
+
+            "Bhai, AI se connection mein problem aa gayi 😭" +
+
+            "<br><br>" +
+
             "Thodi der baad dobara try kar.";
 
         console.error(error);
@@ -950,31 +989,40 @@ User ko unnecessarily repeat karne ko mat bolo.`;
 }
 
 
-// ========================================
-// SEND BUTTON
-// ========================================
+/* -----------------------------
+   SEND BUTTON
+----------------------------- */
 
 document
-    .getElementById("sendBtn")
+    .getElementById(
+        "sendBtn"
+    )
     .addEventListener(
         "click",
         sendMessage
     );
 
 
-// ========================================
-// ENTER KEY
-// ========================================
+/* -----------------------------
+   ENTER TO SEND
+----------------------------- */
 
 document
-    .getElementById("messageInput")
+    .getElementById(
+        "messageInput"
+    )
     .addEventListener(
+
         "keydown",
+
         function(event) {
 
             if (
+
                 event.key === "Enter" &&
+
                 !event.shiftKey
+
             ) {
 
                 event.preventDefault();
@@ -984,23 +1032,30 @@ document
             }
 
         }
+
     );
 
 
-// ========================================
-// PHOTO SELECT
-// ========================================
+/* -----------------------------
+   PHOTO SELECT
+----------------------------- */
 
 document
-    .getElementById("photoInput")
+    .getElementById(
+        "photoInput"
+    )
     .addEventListener(
+
         "change",
+
         function(event) {
 
             const file =
                 event.target.files[0];
 
-            if (!file) return;
+            if (!file) {
+                return;
+            }
 
 
             selectedImage =
@@ -1040,19 +1095,24 @@ document
                 };
 
 
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(
+                file
+            );
 
         }
+
     );
 
 
-// ========================================
-// ANALYZE PHOTO
-// ========================================
+/* -----------------------------
+   ANALYZE PHOTO
+----------------------------- */
 
 async function analyzePhoto() {
 
-    if (photoBusy) return;
+    if (photoBusy) {
+        return;
+    }
 
 
     if (!selectedImage) {
@@ -1062,11 +1122,11 @@ async function analyzePhoto() {
         );
 
         return;
-
     }
 
 
     const question =
+
         document
             .getElementById(
                 "photoQuestion"
@@ -1076,9 +1136,11 @@ async function analyzePhoto() {
 
 
     const analyzeBtn =
-        document.getElementById(
-            "analyzeBtn"
-        );
+
+        document
+            .getElementById(
+                "analyzeBtn"
+            );
 
 
     photoBusy = true;
@@ -1089,13 +1151,16 @@ async function analyzePhoto() {
         "🔍 Samajh raha hoon...";
 
 
-    addMessage(
+    const userQuestion =
 
         question ||
-        "Bhai ye photo samjha de.",
 
+        "Bhai ye photo samjha de.";
+
+
+    addMessage(
+        userQuestion,
         "user"
-
     );
 
 
@@ -1107,14 +1172,21 @@ async function analyzePhoto() {
 
 
     loading.innerHTML = `
+
         <span class="thinking">
+
             Photo dekh raha hoon bhai... 👀
+
             <span class="thinking-dots">
+
                 <span></span>
                 <span></span>
                 <span></span>
+
             </span>
+
         </span>
+
     `;
 
 
@@ -1150,14 +1222,17 @@ async function analyzePhoto() {
                                 },
 
                                 body:
+
                                     JSON.stringify({
 
                                         image:
                                             base64,
 
                                         message:
-                                            question ||
-                                            "Is photo ko dhyan se dekho aur simple Hinglish mein samjhao. Jo important information visible hai use clearly explain karo."
+                                            userQuestion,
+
+                                        sessionId:
+                                            SESSION_ID
 
                                     })
 
@@ -1171,11 +1246,17 @@ async function analyzePhoto() {
 
 
                     const answer =
+
                         data.response ||
+
                         data.result?.response ||
+
                         data.text ||
+
                         data.result?.text ||
+
                         data.error ||
+
                         "Photo samajhne mein problem aa gayi.";
 
 
@@ -1185,11 +1266,11 @@ async function analyzePhoto() {
 
                     conversation.push({
 
-                        role: "user",
+                        role:
+                            "user",
 
                         content:
-                            question ||
-                            "Photo explain karo.",
+                            userQuestion,
 
                         time:
                             Date.now()
@@ -1199,7 +1280,8 @@ async function analyzePhoto() {
 
                     conversation.push({
 
-                        role: "assistant",
+                        role:
+                            "assistant",
 
                         content:
                             answer,
@@ -1218,12 +1300,14 @@ async function analyzePhoto() {
                 } catch (error) {
 
                     loading.innerHTML =
-                        "Bhai photo analyze nahi ho paayi 😭<br><br>" +
+
+                        "Bhai photo analyze nahi ho paayi 😭" +
+
+                        "<br><br>" +
+
                         "Ek baar dobara try kar.";
 
-                    console.error(
-                        error
-                    );
+                    console.error(error);
 
                 }
 
@@ -1264,17 +1348,18 @@ async function analyzePhoto() {
 }
 
 
-// ========================================
-// DIRECT PHOTO BUTTON CONNECTION
-// ========================================
+/* -----------------------------
+   ANALYZE BUTTON
+----------------------------- */
 
 document
-    .getElementById("analyzeBtn")
+    .getElementById(
+        "analyzeBtn"
+    )
     .addEventListener(
         "click",
         analyzePhoto
     );
-
 
 </script>
 
