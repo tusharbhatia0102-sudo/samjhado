@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SamjhaDo - AI Assistant</title>
+
 <style>
 
 * {
@@ -151,6 +161,12 @@ header {
     cursor: pointer;
 }
 
+.send-btn:disabled,
+.analyze-btn:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
 .photo-section {
     max-width: 760px;
     margin: 0 auto 60px;
@@ -233,6 +249,15 @@ input[type="file"] {
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.analyze-btn:hover {
+    transform: translateY(-1px);
+}
+
+.analyze-btn:active {
+    transform: scale(0.99);
 }
 
 .section-title {
@@ -295,6 +320,49 @@ footer {
     font-size: 13px;
 }
 
+/* Small familiar AI animation */
+
+.thinking {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.thinking-dots {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.thinking-dots span {
+    width: 5px;
+    height: 5px;
+    background: #aaaabd;
+    border-radius: 50%;
+    animation: thinking 1.2s infinite;
+}
+
+.thinking-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.thinking-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes thinking {
+
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+
+}
+
 @media(max-width:700px) {
 
     .hero {
@@ -328,173 +396,252 @@ footer {
 }
 
 </style>
+
+</head>
+
 <body>
 
 <div class="container">
 
-    <header>
-        <div class="logo">Samjha<span>Do</span></div>
-        <div class="badge">AI Assistant</div>
-    </header>
+<header>
 
-    <section class="hero">
-        <h1>
-            Kuch samajh nahi aa raha?
-            <span class="gradient">SamjhaDo.</span>
-        </h1>
+    <div class="logo">
+        Samjha<span>Do</span>
+    </div>
 
-        <p>
-            Photo bhejo ya seedha poochho.
-            Bills, documents, homework, screenshots aur everyday problems —
-            simple language mein samjho.
-        </p>
-    </section>
+    <div class="badge">
+        AI Assistant
+    </div>
 
-    <!-- CHAT -->
+</header>
 
-    <div class="chat-box">
 
-        <div class="messages" id="messages">
+<section class="hero">
 
-            <div class="message ai">
-                <div class="message-bubble">
-                    Bhai 👋 main SamjhaDo hoon.<br><br>
-                    Kuch bhi samajh nahi aa raha ho toh pooch le —
-                    ya photo bhej de, main simple language mein samjha dunga.
-                </div>
+    <h1>
+        Kuch samajh nahi aa raha?
+        <span class="gradient">SamjhaDo.</span>
+    </h1>
+
+    <p>
+        Photo bhejo ya seedha poochho.
+        Bills, documents, homework, screenshots aur everyday problems —
+        simple language mein samjho.
+    </p>
+
+</section>
+
+
+<!-- CHAT -->
+
+<div class="chat-box">
+
+    <div class="messages" id="messages">
+
+        <div class="message ai">
+
+            <div class="message-bubble">
+
+                Bhai 👋 main SamjhaDo hoon.
+                <br><br>
+
+                Kuch bhi samajh nahi aa raha ho toh pooch le —
+                ya photo bhej de, main simple language mein samjha dunga.
+
             </div>
 
         </div>
 
-        <div class="input-area">
-
-            <textarea
-                id="messageInput"
-                placeholder="Kuch bhi poochho..."
-                rows="1"
-            ></textarea>
-
-            <button class="send-btn" onclick="sendMessage()">
-                Send
-            </button>
-
-        </div>
-
     </div>
 
 
-    <!-- PHOTO -->
+    <div class="input-area">
 
-    <div class="photo-section">
+        <textarea
+            id="messageInput"
+            placeholder="Kuch bhi poochho..."
+            rows="1"
+        ></textarea>
 
-        <div class="photo-icon">📸</div>
+        <button
+            class="send-btn"
+            id="sendBtn"
+            type="button"
+        >
+            Send
+        </button>
 
-        <h2>Photo se bhi SamjhaDo</h2>
+    </div>
 
-        <p>
-            Bill, document, homework, screenshot, form, notice
-            ya koi bhi readable photo upload karo.
-        </p>
+</div>
 
-        <label for="photoInput" class="choose-btn">
-            📷 Choose Photo
-        </label>
 
-        <input
-            type="file"
-            id="photoInput"
-            accept="image/*"
+<!-- PHOTO -->
+
+<div class="photo-section">
+
+    <div class="photo-icon">
+        📸
+    </div>
+
+    <h2>
+        Photo se bhi SamjhaDo
+    </h2>
+
+    <p>
+        Bill, document, homework, screenshot, form, notice
+        ya koi bhi readable photo upload karo.
+    </p>
+
+
+    <label
+        for="photoInput"
+        class="choose-btn"
+    >
+        📷 Choose Photo
+    </label>
+
+
+    <input
+        type="file"
+        id="photoInput"
+        accept="image/*"
+    >
+
+
+    <div id="previewArea">
+
+        <img
+            id="previewImage"
+            alt="Selected image"
         >
 
-        <div id="previewArea">
 
-            <img
-                id="previewImage"
-                alt="Selected image"
-            >
+        <input
+            type="text"
+            id="photoQuestion"
+            class="photo-question"
+            placeholder="Is photo ke baare mein kya jaan na hai?"
+        >
 
-            <input
-                type="text"
-                id="photoQuestion"
-                class="photo-question"
-                placeholder="Is photo ke baare mein kya jaan na hai?"
-            >
 
-            <button
-                class="analyze-btn"
-                onclick="analyzePhoto()"
-            >
-                🔍 SamjhaDo
-            </button>
-
-        </div>
+        <button
+            type="button"
+            class="analyze-btn"
+            id="analyzeBtn"
+        >
+            🔍 SamjhaDo
+        </button>
 
     </div>
 
+</div>
 
-    <!-- FEATURES -->
 
-    <div class="section-title">
+<!-- FEATURES -->
 
-        <h2>SamjhaDo kis kaam aayega?</h2>
+<div class="section-title">
+
+    <h2>
+        SamjhaDo kis kaam aayega?
+    </h2>
+
+    <p>
+        Students aur office users ke everyday kaam ke liye.
+    </p>
+
+</div>
+
+
+<div class="cards">
+
+    <div class="card">
+
+        <div class="card-icon">
+            🎓
+        </div>
+
+        <h3>
+            Students
+        </h3>
 
         <p>
-            Students aur office users ke everyday kaam ke liye.
+            Homework, maths, questions, notes aur assignments
+            simple steps mein samjho.
         </p>
 
     </div>
 
 
-    <div class="cards">
+    <div class="card">
 
-        <div class="card">
-            <div class="card-icon">🎓</div>
-            <h3>Students</h3>
-            <p>
-                Homework, maths, questions, notes aur assignments
-                simple steps mein samjho.
-            </p>
+        <div class="card-icon">
+            📄
         </div>
 
-        <div class="card">
-            <div class="card-icon">📄</div>
-            <h3>Documents</h3>
-            <p>
-                Bills, forms, notices, letters aur documents
-                ka simple meaning samjho.
-            </p>
-        </div>
+        <h3>
+            Documents
+        </h3>
 
-        <div class="card">
-            <div class="card-icon">💼</div>
-            <h3>Office Work</h3>
-            <p>
-                Invoices, screenshots, emails aur office documents
-                ko easily understand karo.
-            </p>
-        </div>
-
-        <div class="card">
-            <div class="card-icon">💬</div>
-            <h3>Normal Chat</h3>
-            <p>
-                Maths, translation, writing ya koi bhi normal
-                question directly poochho.
-            </p>
-        </div>
+        <p>
+            Bills, forms, notices, letters aur documents
+            ka simple meaning samjho.
+        </p>
 
     </div>
 
 
-    <div class="memory-note">
-        🧠 SamjhaDo recent conversation context ko limited time tak yaad
-        rakh sakta hai, taaki follow-up questions easily pooch sako.
+    <div class="card">
+
+        <div class="card-icon">
+            💼
+        </div>
+
+        <h3>
+            Office Work
+        </h3>
+
+        <p>
+            Invoices, screenshots, emails aur office documents
+            ko easily understand karo.
+        </p>
+
     </div>
 
 
-    <footer>
-        © 2026 SamjhaDo · Simple answers for everyday problems
-    </footer>
+    <div class="card">
+
+        <div class="card-icon">
+            💬
+        </div>
+
+        <h3>
+            Normal Chat
+        </h3>
+
+        <p>
+            Maths, translation, writing ya koi bhi normal
+            question directly poochho.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="memory-note">
+
+    🧠 SamjhaDo recent conversation context ko limited time tak yaad
+    rakh sakta hai, taaki follow-up questions easily pooch sako.
+
+</div>
+
+
+<footer>
+
+    © 2026 SamjhaDo · Simple answers for everyday problems
+
+</footer>
 
 </div>
 
@@ -512,23 +659,29 @@ const MEMORY_TIME =
 
 let selectedImage = null;
 
+let photoBusy = false;
 
-// ================================
+let chatBusy = false;
+
+
+// ========================================
 // MEMORY
-// ================================
+// ========================================
 
 function loadMemory() {
 
     try {
 
         const saved =
-            JSON.parse(localStorage.getItem(MEMORY_KEY));
+            JSON.parse(
+                localStorage.getItem(MEMORY_KEY)
+            );
 
         if (!saved) return [];
 
         if (
-            Date.now() - saved.updatedAt
-            > MEMORY_TIME
+            Date.now() - saved.updatedAt >
+            MEMORY_TIME
         ) {
 
             localStorage.removeItem(MEMORY_KEY);
@@ -542,6 +695,7 @@ function loadMemory() {
 
         return [];
     }
+
 }
 
 
@@ -550,23 +704,32 @@ function saveMemory(messages) {
     try {
 
         localStorage.setItem(
+
             MEMORY_KEY,
+
             JSON.stringify({
+
                 updatedAt: Date.now(),
-                messages: messages.slice(-20)
+
+                messages:
+                    messages.slice(-20)
+
             })
+
         );
 
     } catch {}
+
 }
 
 
-let conversation = loadMemory();
+let conversation =
+    loadMemory();
 
 
-// ================================
-// SHOW MESSAGE
-// ================================
+// ========================================
+// MESSAGE
+// ========================================
 
 function addMessage(text, type) {
 
@@ -594,76 +757,112 @@ function addMessage(text, type) {
 
     messages.scrollTop =
         messages.scrollHeight;
+
+    return bubble;
+
 }
 
 
-// ================================
-// BASIC TEXT FORMAT
-// ================================
+// ========================================
+// TEXT FORMAT
+// ========================================
 
 function formatText(text) {
 
     if (!text) return "";
 
     return String(text)
+
         .replace(/&/g, "&amp;")
+
         .replace(/</g, "&lt;")
+
         .replace(/>/g, "&gt;")
+
         .replace(/\n/g, "<br>");
+
 }
 
 
-// ================================
-// SEND MESSAGE
-// ================================
+// ========================================
+// CHAT
+// ========================================
 
 async function sendMessage() {
 
+    if (chatBusy) return;
+
     const input =
-        document.getElementById("messageInput");
+        document.getElementById(
+            "messageInput"
+        );
+
+    const sendBtn =
+        document.getElementById(
+            "sendBtn"
+        );
 
     const message =
         input.value.trim();
 
     if (!message) return;
 
+    chatBusy = true;
+
+    sendBtn.disabled = true;
 
     input.value = "";
 
-    addMessage(message, "user");
+    addMessage(
+        message,
+        "user"
+    );
 
 
     conversation.push({
+
         role: "user",
+
         content: message,
+
         time: Date.now()
+
     });
 
 
     saveMemory(conversation);
 
 
-    addMessage("Soch raha hoon bhai... 🤔", "ai");
-
     const loading =
-        document.querySelector(
-            "#messages .message:last-child .message-bubble"
+        addMessage(
+            "",
+            "ai"
         );
+
+
+    loading.innerHTML = `
+        <span class="thinking">
+            Soch raha hoon bhai... 🤔
+            <span class="thinking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </span>
+    `;
 
 
     try {
 
-        /*
-         Previous conversation ko text ke andar
-         context ke roop mein bhej rahe hain.
-        */
-
         const history =
             conversation
+
                 .slice(-10)
+
                 .map(item =>
                     `${item.role}: ${item.content}`
                 )
+
                 .join("\n");
 
 
@@ -680,22 +879,26 @@ User ko unnecessarily repeat karne ko mat bolo.`;
 
 
         const response =
-            await fetch(WORKER_URL, {
+            await fetch(
+                WORKER_URL,
+                {
 
-                method: "POST",
+                    method: "POST",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body: JSON.stringify({
+                    body: JSON.stringify({
 
-                    message: finalMessage
+                        message:
+                            finalMessage
 
-                })
+                    })
 
-            });
+                }
+            );
 
 
         const data =
@@ -739,112 +942,180 @@ User ko unnecessarily repeat karne ko mat bolo.`;
 
     }
 
+
+    chatBusy = false;
+
+    sendBtn.disabled = false;
+
 }
 
 
-// ================================
+// ========================================
+// SEND BUTTON
+// ========================================
+
+document
+    .getElementById("sendBtn")
+    .addEventListener(
+        "click",
+        sendMessage
+    );
+
+
+// ========================================
 // ENTER KEY
-// ================================
+// ========================================
 
 document
     .getElementById("messageInput")
-    .addEventListener("keydown", function(event) {
+    .addEventListener(
+        "keydown",
+        function(event) {
 
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
 
-            event.preventDefault();
+                event.preventDefault();
 
-            sendMessage();
+                sendMessage();
+
+            }
 
         }
+    );
 
-    });
 
-
-// ================================
+// ========================================
 // PHOTO SELECT
-// ================================
+// ========================================
 
 document
     .getElementById("photoInput")
-    .addEventListener("change", function(event) {
+    .addEventListener(
+        "change",
+        function(event) {
 
-        const file =
-            event.target.files[0];
+            const file =
+                event.target.files[0];
 
-        if (!file) return;
-
-
-        selectedImage = file;
-
-
-        const reader =
-            new FileReader();
+            if (!file) return;
 
 
-        reader.onload = function(e) {
-
-            document
-                .getElementById("previewImage")
-                .src = e.target.result;
-
-            document
-                .getElementById("previewArea")
-                .style.display = "block";
-
-            document
-                .getElementById("photoQuestion")
-                .style.display = "block";
-
-        };
+            selectedImage =
+                file;
 
 
-        reader.readAsDataURL(file);
+            const reader =
+                new FileReader();
 
-    });
+
+            reader.onload =
+                function(e) {
+
+                    document
+                        .getElementById(
+                            "previewImage"
+                        )
+                        .src =
+                        e.target.result;
 
 
-// ================================
+                    document
+                        .getElementById(
+                            "previewArea"
+                        )
+                        .style.display =
+                        "block";
+
+
+                    document
+                        .getElementById(
+                            "photoQuestion"
+                        )
+                        .style.display =
+                        "block";
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+
+// ========================================
 // ANALYZE PHOTO
-// ================================
+// ========================================
 
 async function analyzePhoto() {
 
+    if (photoBusy) return;
+
+
     if (!selectedImage) {
 
-        alert("Pehle photo choose kar bhai 😭");
+        alert(
+            "Pehle photo choose kar bhai 😭"
+        );
 
         return;
+
     }
 
 
     const question =
         document
-            .getElementById("photoQuestion")
+            .getElementById(
+                "photoQuestion"
+            )
             .value
             .trim();
 
 
+    const analyzeBtn =
+        document.getElementById(
+            "analyzeBtn"
+        );
+
+
+    photoBusy = true;
+
+    analyzeBtn.disabled = true;
+
+    analyzeBtn.innerHTML =
+        "🔍 Samajh raha hoon...";
+
+
     addMessage(
+
         question ||
         "Bhai ye photo samjha de.",
+
         "user"
-    );
 
-
-    addMessage(
-        "Photo dekh raha hoon bhai... 👀",
-        "ai"
     );
 
 
     const loading =
-        document.querySelector(
-            "#messages .message:last-child .message-bubble"
+        addMessage(
+            "",
+            "ai"
         );
+
+
+    loading.innerHTML = `
+        <span class="thinking">
+            Photo dekh raha hoon bhai... 👀
+            <span class="thinking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </span>
+    `;
 
 
     try {
@@ -853,80 +1124,124 @@ async function analyzePhoto() {
             new FileReader();
 
 
-        reader.onload = async function(e) {
+        reader.onload =
+            async function(e) {
 
-            const base64 =
-                e.target.result;
+                try {
 
-
-            const response =
-                await fetch(WORKER_URL, {
-
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body: JSON.stringify({
-
-                        image: base64
-
-                    })
-
-                });
+                    const base64 =
+                        e.target.result;
 
 
-            const data =
-                await response.json();
+                    const response =
+                        await fetch(
+
+                            WORKER_URL,
+
+                            {
+
+                                method: "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json"
+
+                                },
+
+                                body:
+                                    JSON.stringify({
+
+                                        image:
+                                            base64,
+
+                                        message:
+                                            question ||
+                                            "Is photo ko dhyan se dekho aur simple Hinglish mein samjhao. Jo important information visible hai use clearly explain karo."
+
+                                    })
+
+                            }
+
+                        );
 
 
-            const answer =
-                data.response ||
-                data.result?.response ||
-                data.text ||
-                data.result?.text ||
-                data.error ||
-                "Photo samajhne mein problem aa gayi.";
+                    const data =
+                        await response.json();
 
 
-            loading.innerHTML =
-                formatText(answer);
+                    const answer =
+                        data.response ||
+                        data.result?.response ||
+                        data.text ||
+                        data.result?.text ||
+                        data.error ||
+                        "Photo samajhne mein problem aa gayi.";
 
 
-            conversation.push({
-
-                role: "user",
-
-                content:
-                    question ||
-                    "Photo explain karo.",
-
-                time: Date.now()
-
-            });
+                    loading.innerHTML =
+                        formatText(answer);
 
 
-            conversation.push({
+                    conversation.push({
 
-                role: "assistant",
+                        role: "user",
 
-                content: answer,
+                        content:
+                            question ||
+                            "Photo explain karo.",
 
-                time: Date.now()
+                        time:
+                            Date.now()
 
-            });
-
-
-            saveMemory(conversation);
-
-        };
+                    });
 
 
-        reader.readAsDataURL(selectedImage);
+                    conversation.push({
+
+                        role: "assistant",
+
+                        content:
+                            answer,
+
+                        time:
+                            Date.now()
+
+                    });
+
+
+                    saveMemory(
+                        conversation
+                    );
+
+
+                } catch (error) {
+
+                    loading.innerHTML =
+                        "Bhai photo analyze nahi ho paayi 😭<br><br>" +
+                        "Ek baar dobara try kar.";
+
+                    console.error(
+                        error
+                    );
+
+                }
+
+
+                photoBusy = false;
+
+                analyzeBtn.disabled =
+                    false;
+
+                analyzeBtn.innerHTML =
+                    "🔍 SamjhaDo";
+
+            };
+
+
+        reader.readAsDataURL(
+            selectedImage
+        );
 
 
     } catch (error) {
@@ -936,10 +1251,32 @@ async function analyzePhoto() {
 
         console.error(error);
 
+        photoBusy = false;
+
+        analyzeBtn.disabled =
+            false;
+
+        analyzeBtn.innerHTML =
+            "🔍 SamjhaDo";
+
     }
 
 }
 
+
+// ========================================
+// DIRECT PHOTO BUTTON CONNECTION
+// ========================================
+
+document
+    .getElementById("analyzeBtn")
+    .addEventListener(
+        "click",
+        analyzePhoto
+    );
+
+
 </script>
 
 </body>
+</html>
