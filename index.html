@@ -1,2957 +1,1409 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SamjhaDo - AI Assistant</title>
+<meta name="theme-color" content="#080710">
+<meta name="description" content="SamjhaDo AI helps you understand documents, photos, PDFs, homework and everyday questions in simple language.">
+<title>SamjhaDo — Understand Anything</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root {
+    --bg: #080710;
+    --surface: rgba(19, 17, 31, .82);
+    --surface-2: #151321;
+    --border: rgba(177, 151, 255, .16);
+    --purple: #a78bfa;
+    --violet: #8b5cf6;
+    --blue: #60a5fa;
+    --text: #f7f5ff;
+    --muted: #a09bb5;
+    --soft: #706b83;
+    --radius: 24px;
 }
 
-html {
-    scroll-behavior: smooth;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #08080d;
-    color: #ffffff;
     min-height: 100vh;
+    color: var(--text);
+    background:
+        radial-gradient(ellipse at 12% 0%, rgba(108, 59, 202, .20), transparent 35%),
+        radial-gradient(ellipse at 95% 28%, rgba(49, 91, 190, .12), transparent 32%),
+        var(--bg);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    overflow-x: hidden;
 }
 
-.container {
-    width: 92%;
-    max-width: 1050px;
-    margin: auto;
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: .15;
+    background-image: radial-gradient(rgba(255,255,255,.28) .6px, transparent .6px);
+    background-size: 24px 24px;
+    mask-image: linear-gradient(to bottom, black, transparent 80%);
 }
 
-/* =========================
-   HEADER
-========================= */
+button, input, textarea { font: inherit; }
+button { color: inherit; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, label:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: 3px;
+}
+button:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
 
+.container { width: min(1100px, 92%); margin: 0 auto; }
+
+/* HEADER */
 header {
-    padding: 22px 0;
+    min-height: 82px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    gap: 15px;
+    gap: 18px;
+    border-bottom: 1px solid rgba(255,255,255,.055);
 }
 
-.logo {
-    font-size: 25px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
+.brand { display: flex; align-items: center; gap: 11px; }
+
+.brand-mark {
+    width: 43px;
+    height: 43px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    font-size: 21px;
+    background: linear-gradient(145deg, #9b72ff, #5c39bc 65%, #3859c8);
+    box-shadow: 0 0 30px rgba(139,92,246,.28), inset 0 1px rgba(255,255,255,.35);
 }
 
-.logo span {
-    color: #9b6cff;
-}
+.logo { font-size: 23px; font-weight: 850; letter-spacing: -1px; }
+.logo span { color: var(--purple); }
+.brand-caption { margin-top: 2px; font-size: 10px; color: var(--soft); letter-spacing: 1.1px; }
 
-.header-actions {
+.header-actions { display: flex; align-items: center; gap: 9px; }
+
+.top-btn {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.035);
+    padding: 10px 13px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .22s ease;
+}
+.top-btn:hover { background: rgba(167,139,250,.12); border-color: rgba(167,139,250,.42); transform: translateY(-2px); }
+
+.status-pill {
     display: flex;
     align-items: center;
-    gap: 9px;
-}
-
-.start-fresh-btn,
-.memory-lane-btn {
-    border: 1px solid #292938;
-    background: #101016;
-    color: #ffffff;
-    padding: 9px 13px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    transition: 0.2s ease;
-}
-
-.start-fresh-btn:hover,
-.memory-lane-btn:hover {
-    background: #191923;
-    border-color: #3b3650;
-    transform: translateY(-1px);
-}
-
-.badge {
-    font-size: 12px;
-    padding: 7px 12px;
-    border: 1px solid #292938;
+    gap: 7px;
+    padding: 8px 11px;
+    border: 1px solid rgba(74,222,128,.16);
     border-radius: 30px;
-    color: #bdbdcc;
+    color: #a7efc1;
+    background: rgba(74,222,128,.045);
+    font-size: 11px;
+    white-space: nowrap;
 }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 10px rgba(74,222,128,.65); }
 
-/* =========================
-   MEMORY LANE
-========================= */
-
+/* MEMORY LANE */
 .memory-lane {
     display: none;
-    max-width: 760px;
-    margin: -5px auto 32px;
-    background: rgba(16, 16, 22, 0.96);
-    border: 1px solid #302d3d;
-    border-radius: 22px;
+    margin: 18px auto 0;
+    border: 1px solid var(--border);
+    background: rgba(15,13,25,.96);
+    border-radius: 21px;
     overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-    animation: laneIn 0.22s ease;
+    box-shadow: 0 20px 70px rgba(0,0,0,.25);
 }
+.memory-lane.open { display: block; animation: rise .25s ease; }
 
-.memory-lane.open {
-    display: block;
-}
-
-@keyframes laneIn {
-    from {
-        opacity: 0;
-        transform: translateY(-8px) scale(0.985);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.memory-lane-head {
-    padding: 16px 18px 13px;
+.memory-head {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #252530;
-}
-
-.memory-lane-heading {
-    display: flex;
     align-items: center;
-    gap: 9px;
-}
-
-.memory-lane-icon {
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 11px;
-    background: #1b1728;
-    border: 1px solid #302748;
-    font-size: 17px;
-}
-
-.memory-lane-title {
-    font-size: 15px;
-    font-weight: 800;
-}
-
-.memory-lane-subtitle {
-    margin-top: 3px;
-    color: #707080;
-    font-size: 10px;
-}
-
-.close-memory {
-    border: none;
-    background: transparent;
-    color: #777786;
-    font-size: 21px;
-    cursor: pointer;
-    padding: 3px 6px;
-}
-
-.close-memory:hover {
-    color: white;
-}
-
-.memory-track {
-    display: flex;
     gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 17px 18px 19px;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+    padding: 17px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
 }
-
-.memory-track::-webkit-scrollbar {
-    display: none;
-}
-
+.memory-heading { font-size: 14px; font-weight: 800; }
+.memory-subtitle { color: var(--soft); font-size: 11px; margin-top: 4px; }
+.close-memory { background: transparent; border: 0; color: var(--muted); font-size: 24px; cursor: pointer; }
+.memory-track { display: flex; gap: 12px; overflow-x: auto; padding: 17px 19px; scrollbar-width: thin; }
 .memory-card {
-    flex: 0 0 245px;
-    min-width: 245px;
-    min-height: 126px;
-    scroll-snap-align: start;
-    background: linear-gradient(145deg, #171720, #111118);
-    border: 1px solid #292936;
-    border-radius: 17px;
+    flex: 0 0 235px;
+    min-width: 0;
     padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: linear-gradient(145deg, rgba(39,31,59,.7), rgba(19,17,31,.9));
     cursor: pointer;
-    transition: 0.2s ease;
-    position: relative;
-    overflow: hidden;
+    transition: .2s ease;
 }
+.memory-card:hover { border-color: rgba(167,139,250,.5); transform: translateY(-3px); }
+.memory-card-icon { font-size: 19px; margin-bottom: 13px; }
+.memory-card-title { font-size: 13px; font-weight: 750; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.memory-card-preview { color: var(--muted); font-size: 11px; margin-top: 6px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.memory-card-date { color: var(--soft); font-size: 10px; margin-top: 12px; }
+.memory-empty { width: 100%; text-align: center; padding: 22px 10px; font-size: 12px; color: var(--muted); }
 
-.memory-card::after {
-    content: "";
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    right: -35px;
-    top: -35px;
-    border-radius: 50%;
-    background: rgba(155,108,255,0.07);
-}
+/* HERO */
+.hero { text-align: center; padding: 78px 0 34px; }
 
-.memory-card:hover {
-    transform: translateY(-2px);
-    border-color: #40385b;
-    background: #1a1923;
-}
-
-.memory-card-top {
-    display: flex;
+.eyebrow {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 12px;
-}
-
-.memory-card-icon {
-    width: 31px;
-    height: 31px;
-    border-radius: 10px;
-    background: #211b30;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-}
-
-.memory-card-arrow {
-    color: #8d7aa9;
-    font-size: 13px;
-}
-
-.memory-card-title {
-    color: #eeeeF5;
-    font-size: 13px;
-    line-height: 1.35;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.memory-card-preview {
-    color: #777786;
+    gap: 8px;
+    padding: 8px 13px;
+    border: 1px solid rgba(167,139,250,.23);
+    border-radius: 30px;
+    background: rgba(139,92,246,.075);
+    color: #d1c2ff;
     font-size: 11px;
-    line-height: 1.45;
-    margin-top: 5px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-weight: 700;
+    letter-spacing: .4px;
+    margin-bottom: 25px;
 }
-
-.memory-card-date {
-    color: #575765;
-    font-size: 10px;
-    margin-top: 11px;
-}
-
-.memory-empty {
-    width: 100%;
-    text-align: center;
-    color: #777786;
-    font-size: 12px;
-    padding: 18px 5px;
-}
-
-.memory-hint {
-    padding: 0 18px 15px;
-    color: #555563;
-    font-size: 10px;
-}
-
-/* =========================
-   HERO
-========================= */
-
-.hero {
-    text-align: center;
-    padding: 65px 0 30px;
-}
+.eyebrow-spark { color: #c4b5fd; }
 
 .hero h1 {
-    font-size: clamp(38px, 7vw, 70px);
-    line-height: 1.05;
-    letter-spacing: -3px;
-    max-width: 800px;
-    margin: auto;
+    max-width: 850px;
+    margin: 0 auto;
+    font-size: clamp(42px, 7.3vw, 76px);
+    line-height: 1.04;
+    letter-spacing: -3.8px;
+    font-weight: 850;
 }
-
-.gradient {
-    background: linear-gradient(90deg, #9b6cff, #d78cff);
-    -webkit-background-clip: text;
+.gradient-text {
     color: transparent;
+    background: linear-gradient(100deg, #c4b5fd 5%, #9b7bff 45%, #70b8ff 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
+.hero p { max-width: 590px; margin: 21px auto 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
 
-.hero p {
-    color: #a4a4b4;
-    font-size: 17px;
-    line-height: 1.6;
-    max-width: 650px;
-    margin: 22px auto 0;
+.trust-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+.trust-chip { color: #b5afc8; font-size: 11px; padding: 8px 11px; border-radius: 30px; border: 1px solid rgba(255,255,255,.075); background: rgba(255,255,255,.025); }
+
+/* CHAT */
+.workspace { max-width: 790px; margin: 28px auto 48px; }
+
+.chat-shell {
+    position: relative;
+    padding: 1px;
+    border-radius: 27px;
+    background: linear-gradient(140deg, rgba(167,139,250,.42), rgba(255,255,255,.07) 38%, rgba(96,165,250,.19));
+    box-shadow: 0 28px 90px rgba(0,0,0,.28), 0 0 60px rgba(113,72,201,.06);
 }
-
-/* =========================
-   CHAT
-========================= */
-
-.chat-box {
-    max-width: 760px;
-    margin: 30px auto 60px;
-    background: #101016;
-    border: 1px solid #292936;
-    border-radius: 25px;
-    overflow: hidden;
-}
+.chat-inner { overflow: hidden; border-radius: 26px; background: rgba(14,13,23,.97); }
 
 .chat-top {
-    border-bottom: 1px solid #292936;
-    padding: 13px 18px;
+    min-height: 65px;
+    padding: 14px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
 }
-
-.chat-title {
-    font-size: 13px;
-    color: #aaaabd;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.chat-identity { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.ai-avatar {
+    width: 36px; height: 36px; flex: 0 0 36px;
+    display: grid; place-items: center;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #8b5cf6, #5340aa);
+    box-shadow: 0 0 22px rgba(139,92,246,.17);
 }
-
-.chat-status {
-    font-size: 11px;
-    color: #777786;
-    white-space: nowrap;
-}
+.chat-name { font-size: 13px; font-weight: 800; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.chat-caption { margin-top: 3px; color: var(--soft); font-size: 10px; }
+.chat-status { color: #a9a0c3; font-size: 10px; white-space: nowrap; }
 
 .messages {
-    min-height: 280px;
+    min-height: 260px;
     max-height: 520px;
     overflow-y: auto;
-    padding: 22px;
+    padding: 23px 21px;
+    scrollbar-width: thin;
+    scrollbar-color: #39314e transparent;
 }
-
-.message {
-    margin-bottom: 18px;
-    display: flex;
-}
-
-.message.user {
-    justify-content: flex-end;
-}
-
+.message { display: flex; margin-bottom: 18px; animation: messageIn .22s ease; }
+.message.user { justify-content: flex-end; }
+.message.ai { justify-content: flex-start; }
 .message-bubble {
-    max-width: 82%;
+    max-width: 86%;
     padding: 13px 16px;
-    border-radius: 16px;
-    line-height: 1.55;
-    font-size: 14px;
-    word-wrap: break-word;
+    border-radius: 17px;
+    font-size: 13px;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
 }
-
 .message.ai .message-bubble {
-    background: #191923;
-    border: 1px solid #292936;
-    color: #ddddea;
+    background: linear-gradient(145deg, #1b1929, #171521);
+    border: 1px solid rgba(255,255,255,.075);
+    color: #e2deef;
+    border-top-left-radius: 5px;
 }
-
 .message.user .message-bubble {
-    background: #9b6cff;
+    background: linear-gradient(135deg, #8958ed, #7047ce);
+    border: 1px solid rgba(255,255,255,.13);
     color: white;
+    border-top-right-radius: 5px;
+    box-shadow: 0 7px 25px rgba(112,71,206,.15);
 }
+.message-bubble strong { color: #fff; }
 
 .input-area {
-    border-top: 1px solid #292936;
-    padding: 15px;
     display: flex;
-    gap: 10px;
     align-items: flex-end;
+    gap: 10px;
+    padding: 13px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    background: rgba(255,255,255,.015);
 }
-
 #messageInput {
     flex: 1;
-    resize: none;
+    min-width: 0;
     min-height: 48px;
-    max-height: 130px;
-    padding: 14px;
-    border: none;
+    max-height: 140px;
+    resize: vertical;
+    border: 1px solid rgba(255,255,255,.08);
     outline: none;
-    border-radius: 13px;
-    background: #181820;
+    background: #171521;
     color: white;
-    font-size: 14px;
+    padding: 14px 15px;
+    border-radius: 15px;
+    font-size: 13px;
+    line-height: 1.5;
+    transition: border .2s, box-shadow .2s;
 }
-
-#messageInput::placeholder {
-    color: #777786;
-}
+#messageInput:focus { border-color: rgba(167,139,250,.5); box-shadow: 0 0 0 3px rgba(139,92,246,.08); }
+#messageInput::placeholder { color: #79738d; }
 
 .send-btn {
-    border: none;
-    background: #9b6cff;
-    color: white;
-    padding: 14px 18px;
-    border-radius: 13px;
-    font-weight: 700;
+    min-height: 48px;
+    border: 0;
+    border-radius: 14px;
+    padding: 0 19px;
+    font-weight: 800;
+    font-size: 12px;
     cursor: pointer;
+    background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+    color: white;
+    box-shadow: 0 6px 22px rgba(139,92,246,.18);
+    transition: .2s ease;
 }
+.send-btn:hover { transform: translateY(-2px); box-shadow: 0 9px 27px rgba(139,92,246,.3); }
+.chat-footnote { padding: 0 12px 14px; text-align: center; font-size: 10px; color: #706a82; }
 
-.send-btn:disabled,
-.analyze-btn:disabled {
-    opacity: 0.65;
-    cursor: wait;
+/* THINKING */
+.thinking { display: inline-flex; align-items: center; gap: 9px; color: #c2b7e7; }
+.thinking-dots { display: inline-flex; gap: 4px; }
+.thinking-dots span { width: 5px; height: 5px; border-radius: 50%; background: #b7a1ff; animation: pulse 1.1s infinite; }
+.thinking-dots span:nth-child(2) { animation-delay: .18s; }
+.thinking-dots span:nth-child(3) { animation-delay: .36s; }
+
+/* UPLOAD CARDS */
+.section-heading { text-align: center; margin: 65px 0 25px; }
+.section-heading h2 { font-size: clamp(24px, 4vw, 32px); letter-spacing: -1px; }
+.section-heading p { color: var(--muted); font-size: 13px; margin-top: 9px; line-height: 1.7; }
+
+.upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 790px; margin: 0 auto 70px; }
+
+.upload-card {
+    position: relative;
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 23px;
+    background: linear-gradient(145deg, rgba(25,22,39,.94), rgba(14,13,23,.96));
+    overflow: hidden;
+    transition: transform .22s, border-color .22s, box-shadow .22s;
 }
-
-/* =========================
-   PHOTO
-========================= */
-
-.photo-section {
-    max-width: 760px;
-    margin: 0 auto 60px;
-    background: #101016;
-    border: 1px solid #292936;
-    border-radius: 25px;
-    padding: 30px;
-    text-align: center;
+.upload-card::before {
+    content: "";
+    position: absolute;
+    top: -65px;
+    right: -65px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: rgba(139,92,246,.1);
+    filter: blur(16px);
+    pointer-events: none;
 }
+.upload-card:hover { transform: translateY(-3px); border-color: rgba(167,139,250,.38); box-shadow: 0 18px 45px rgba(0,0,0,.18); }
+.upload-icon { width: 51px; height: 51px; display: grid; place-items: center; font-size: 24px; border-radius: 16px; background: rgba(139,92,246,.13); border: 1px solid rgba(167,139,250,.16); margin-bottom: 17px; }
+.upload-card h3 { font-size: 18px; letter-spacing: -.4px; }
+.upload-card > p { margin-top: 9px; min-height: 45px; font-size: 12px; line-height: 1.75; color: var(--muted); }
+.upload-tag { display: inline-block; margin: 13px 0 17px; padding: 6px 9px; font-size: 10px; color: #c9b8ff; background: rgba(139,92,246,.09); border: 1px solid rgba(167,139,250,.17); border-radius: 8px; }
 
-.photo-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 15px;
+input[type="file"] { display: none; }
+
+.choose-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 18px;
-    background: #1b1728;
-    font-size: 26px;
-}
-
-.photo-section h2 {
-    font-size: 22px;
-    margin-bottom: 8px;
-}
-
-.photo-section p {
-    color: #858595;
-    font-size: 14px;
-    margin-bottom: 12px;
-}
-
-/* =========================
-   PHOTO USAGE
-========================= */
-
-.photo-usage {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin-bottom: 20px;
-    padding: 7px 12px;
-    border-radius: 30px;
-    border: 1px solid #302d3d;
-    background: #17151f;
-    color: #aaaabd;
-    font-size: 12px;
-}
-
-.photo-limit-box {
-    display: none;
-    margin: 0 auto 20px;
-    padding: 18px;
-    border-radius: 16px;
-    border: 1px solid #493c5d;
-    background: linear-gradient(
-        145deg,
-        #1b1725,
-        #121119
-    );
-    text-align: center;
-}
-
-.photo-limit-box.show {
-    display: block;
-}
-
-.photo-limit-title {
-    font-size: 15px;
-    font-weight: 800;
-    margin-bottom: 7px;
-}
-
-.photo-limit-text {
-    color: #858595;
-    font-size: 12px;
-    line-height: 1.5;
-}
-
-.upgrade-btn {
-    margin-top: 13px;
-    border: 1px solid #514267;
-    background: #211a2d;
-    color: #d7c5ff;
-    padding: 9px 15px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-input[type="file"] {
-    display: none;
-}
-
-.choose-btn {
-    display: inline-block;
-    cursor: pointer;
-    padding: 13px 22px;
+    width: 100%;
+    min-height: 45px;
     border-radius: 13px;
-    background: #9b6cff;
-    font-weight: 700;
+    border: 1px solid rgba(167,139,250,.3);
+    background: linear-gradient(120deg, rgba(139,92,246,.16), rgba(96,165,250,.08));
+    color: #e1d8ff;
+    font-weight: 750;
+    font-size: 12px;
+    cursor: pointer;
+    transition: .2s ease;
 }
+.choose-btn:hover { background: rgba(139,92,246,.23); border-color: rgba(167,139,250,.52); }
 
-#previewArea {
-    display: none;
-    margin-top: 25px;
-}
-
-#previewImage {
-    max-width: 100%;
-    max-height: 330px;
-    border-radius: 16px;
-    border: 1px solid #30303d;
-}
+#previewArea { display: none; margin-top: 18px; }
+#previewImage { display: block; max-width: 100%; max-height: 250px; margin: 0 auto; border-radius: 13px; border: 1px solid var(--border); }
+.file-name { margin-top: 12px; font-size: 11px; color: #b9b0cf; overflow-wrap: anywhere; line-height: 1.6; }
+.file-status { min-height: 18px; margin-top: 10px; font-size: 11px; color: var(--muted); line-height: 1.65; overflow-wrap: anywhere; }
 
 .photo-question {
-    display: none;
+    display: block;
     width: 100%;
-    margin-top: 15px;
-    padding: 13px;
-    border: 1px solid #292936;
-    outline: none;
-    border-radius: 13px;
-    background: #181820;
+    margin-top: 13px;
+    padding: 12px 13px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.09);
+    background: #13111f;
     color: white;
-    font-size: 14px;
+    font-size: 12px;
+    outline: none;
 }
+.photo-question:focus { border-color: rgba(167,139,250,.45); }
+.photo-question::placeholder { color: #79738d; }
 
 .analyze-btn {
-    margin-top: 15px;
+    display: block;
     width: 100%;
-    padding: 15px;
-    border: none;
+    margin-top: 12px;
+    padding: 13px;
+    border: 0;
     border-radius: 13px;
-    background: white;
-    color: #08080d;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.analyze-btn:hover {
-    transform: translateY(-1px);
-}
-
-.analyze-btn:active {
-    transform: scale(0.99);
-}
-
-/* =========================
-   CARDS
-========================= */
-
-.section-title {
-    text-align: center;
-    margin: 70px 0 25px;
-}
-
-.section-title h2 {
-    font-size: 30px;
-}
-
-.section-title p {
-    color: #858595;
-    margin-top: 8px;
-}
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 70px;
-}
-
-.card {
-    background: #101016;
-    border: 1px solid #242430;
-    border-radius: 18px;
-    padding: 22px;
-}
-
-.card-icon {
-    font-size: 25px;
-    margin-bottom: 15px;
-}
-
-.card h3 {
-    font-size: 16px;
-    margin-bottom: 7px;
-}
-
-.card p {
-    color: #858595;
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.memory-note {
-    max-width: 760px;
-    margin: -25px auto 60px;
-    text-align: center;
-    color: #686878;
+    background: #f1edff;
+    color: #201634;
+    font-weight: 850;
     font-size: 12px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.analyze-btn:hover:not(:disabled) { transform: translateY(-2px); background: white; box-shadow: 0 8px 22px rgba(139,92,246,.15); }
+
+.usage-pill { display: inline-flex; align-items: center; gap: 6px; color: #c5b7ed; border: 1px solid rgba(167,139,250,.17); background: rgba(139,92,246,.08); border-radius: 30px; padding: 7px 10px; font-size: 10px; margin: 13px 0 0; }
+.limit-box { display: none; margin-top: 13px; padding: 12px; border: 1px solid rgba(248,113,113,.23); border-radius: 12px; background: rgba(248,113,113,.055); color: #ffc1c1; font-size: 11px; line-height: 1.7; }
+.limit-box.show { display: block; }
+.upgrade-btn { margin-top: 9px; padding: 8px 10px; border: 1px solid var(--border); background: rgba(255,255,255,.04); border-radius: 9px; font-size: 10px; cursor: pointer; }
+.pdf-limit-note { margin: 14px 0; padding: 12px; border-radius: 12px; border: 1px solid rgba(167,139,250,.16); background: rgba(139,92,246,.065); color: #c8c0da; font-size: 10px; line-height: 1.7; }
+.pdf-limit-note strong { color: #e0d4ff; }
+
+/* FEATURES */
+.features-title { text-align: center; margin: 0 0 24px; }
+.features-title h2 { font-size: clamp(24px, 4vw, 31px); letter-spacing: -1px; }
+.features-title p { color: var(--muted); margin-top: 9px; font-size: 13px; }
+.feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 60px; }
+.feature-card { padding: 20px; border: 1px solid rgba(255,255,255,.07); background: rgba(20,18,30,.72); border-radius: 18px; transition: .2s ease; }
+.feature-card:hover { transform: translateY(-3px); border-color: var(--border); }
+.feature-icon { font-size: 23px; margin-bottom: 14px; }
+.feature-card h3 { font-size: 13px; margin-bottom: 8px; }
+.feature-card p { color: var(--muted); font-size: 11px; line-height: 1.75; }
+
+.memory-note { max-width: 730px; margin: 0 auto 42px; text-align: center; color: var(--soft); font-size: 11px; line-height: 1.7; }
+footer { border-top: 1px solid rgba(255,255,255,.065); padding: 25px 0 32px; color: var(--soft); font-size: 11px; text-align: center; }
+.footer-brand { color: #b9a2ff; font-weight: 800; }
+
+@keyframes pulse { 0%, 60%, 100% { opacity: .3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+@keyframes messageIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes rise { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 
-footer {
-    border-top: 1px solid #20202a;
-    padding: 25px 0;
-    text-align: center;
-    color: #666675;
-    font-size: 13px;
+@media(max-width:800px) {
+    .feature-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero { padding-top: 63px; }
+    .hero h1 { letter-spacing: -2.6px; }
 }
 
-/* =========================
-   THINKING
-========================= */
-
-.thinking {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.thinking-dots {
-    display: inline-flex;
-    gap: 3px;
-}
-
-.thinking-dots span {
-    width: 5px;
-    height: 5px;
-    background: #aaaabd;
-    border-radius: 50%;
-    animation: thinking 1.2s infinite;
-}
-
-.thinking-dots span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.thinking-dots span:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-@keyframes thinking {
-    0%, 60%, 100% {
-        opacity: 0.3;
-        transform: translateY(0);
-    }
-
-    30% {
-        opacity: 1;
-        transform: translateY(-3px);
-    }
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:700px) {
-
-    .container {
-        width: 94%;
-    }
-
-    header {
-        align-items: center;
-    }
-
-    .header-actions {
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
-
-    .badge {
-        display: none;
-    }
-
-    .start-fresh-btn,
-    .memory-lane-btn {
-        padding: 8px 10px;
-        font-size: 11px;
-    }
-
-    .hero {
-        padding-top: 45px;
-    }
-
-    .hero h1 {
-        letter-spacing: -2px;
-    }
-
-    .hero p {
-        font-size: 15px;
-    }
-
-    .chat-box {
-        margin-top: 22px;
-    }
-
-    .chat-top {
-        align-items: flex-start;
-    }
-
-    .chat-status {
-        font-size: 10px;
-    }
-
-    .cards {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .input-area {
-        flex-direction: column;
-    }
-
-    .send-btn {
-        width: 100%;
-    }
-
-    .message-bubble {
-        max-width: 90%;
-    }
-
-    .memory-lane {
-        margin-top: 0;
-    }
-
-    .memory-card {
-        flex-basis: 225px;
-        min-width: 225px;
-    }
-
-    .memory-track {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
-
-    .memory-lane-head {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
-
-    .memory-hint {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
+@media(max-width:600px) {
+    .container { width: 93%; }
+    header { min-height: 73px; gap: 8px; }
+    .brand-mark { width: 37px; height: 37px; border-radius: 12px; font-size: 18px; }
+    .logo { font-size: 20px; }
+    .brand-caption, .status-pill { display: none; }
+    .header-actions { gap: 6px; }
+    .top-btn { padding: 9px 9px; font-size: 10px; border-radius: 10px; }
+    .hero { padding: 55px 0 23px; }
+    .hero h1 { font-size: clamp(39px, 10vw, 56px); letter-spacing: -2.5px; }
+    .hero p { font-size: 13px; line-height: 1.8; }
+    .eyebrow { font-size: 10px; margin-bottom: 19px; }
+    .trust-row { gap: 6px; }
+    .trust-chip { font-size: 10px; padding: 7px 9px; }
+    .workspace { margin-top: 22px; }
+    .chat-top { padding: 12px; }
+    .messages { padding: 17px 12px; min-height: 230px; max-height: 450px; }
+    .message-bubble { max-width: 94%; padding: 12px; font-size: 12px; }
+    .input-area { padding: 10px; gap: 7px; }
+    #messageInput { padding: 12px; font-size: 12px; }
+    .send-btn { padding: 0 13px; font-size: 11px; }
+    .upload-grid { grid-template-columns: 1fr; gap: 13px; margin-bottom: 55px; }
+    .upload-card { padding: 20px; }
+    .upload-card > p { min-height: 0; }
+    .section-heading { margin-top: 50px; }
+    .feature-grid { gap: 10px; }
+    .feature-card { padding: 15px; }
+    .feature-card h3 { font-size: 12px; }
+    .feature-card p { font-size: 10px; }
+    .memory-card { flex-basis: 210px; }
 }
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
 <header>
-
-    <div class="logo">
-        Samjha<span>Do</span>
+    <div class="brand">
+        <div class="brand-mark">✦</div>
+        <div>
+            <div class="logo">Samjha<span>Do</span></div>
+            <div class="brand-caption">UNDERSTAND ANYTHING</div>
+        </div>
     </div>
 
     <div class="header-actions">
-
-        <button
-            class="start-fresh-btn"
-            id="newChatBtn"
-            type="button">
-            ＋ Start Fresh
-        </button>
-
-        <button
-            class="memory-lane-btn"
-            id="memoryLaneBtn"
-            type="button">
-            🧠 Memory Lane
-        </button>
-
-        <div class="badge">
-            AI Assistant
-        </div>
-
+        <div class="status-pill"><span class="status-dot"></span> AI Assistant</div>
+        <button class="top-btn" id="newChatBtn" type="button">＋ New Chat</button>
+        <button class="top-btn" id="memoryLaneBtn" type="button">🧠 History</button>
     </div>
-
 </header>
 
-
-<!-- =========================
-     MEMORY LANE
-========================= -->
-
-<div
-    class="memory-lane"
-    id="memoryLane">
-
-    <div class="memory-lane-head">
-
-        <div class="memory-lane-heading">
-
-            <div class="memory-lane-icon">
-                🧠
-            </div>
-
-            <div>
-                <div class="memory-lane-title">
-                    Memory Lane
-                </div>
-
-                <div class="memory-lane-subtitle">
-                    Pick a chat and continue where you left off
-                </div>
-            </div>
-
+<section class="memory-lane" id="memoryLane">
+    <div class="memory-head">
+        <div>
+            <div class="memory-heading">🧠 Your conversation history</div>
+            <div class="memory-subtitle">Choose a previous chat to continue</div>
         </div>
-
-        <button
-            class="close-memory"
-            id="closeMemory"
-            type="button">
-            ×
-        </button>
-
+        <button class="close-memory" id="closeMemory" type="button" aria-label="Close history">×</button>
     </div>
-
-
-    <div
-        class="memory-track"
-        id="memoryTrack">
-
-        <div class="memory-empty">
-            Chats load ho rahi hain...
-        </div>
-
+    <div class="memory-track" id="memoryTrack">
+        <div class="memory-empty">Loading your chats...</div>
     </div>
-
-
-    <div class="memory-hint">
-        ← Swipe to explore your chats →
-    </div>
-
-</div>
-
-
-<section class="hero">
-
-    <h1>
-        Kuch samajh nahi aa raha?
-        <span class="gradient">SamjhaDo.</span>
-    </h1>
-
-    <p>
-        Photo bhejo ya seedha poochho.
-        Bills, documents, homework, screenshots aur everyday problems —
-        simple language mein samjho.
-    </p>
-
 </section>
 
-
-<!-- =========================
-     CHAT
-========================= -->
-
-<div class="chat-box">
-
-    <div class="chat-top">
-
-        <div
-            class="chat-title"
-            id="chatTitle">
-            New Chat
-        </div>
-
-        <div
-            class="chat-status"
-            id="chatStatus">
-            Fresh conversation
-        </div>
-
+<section class="hero">
+    <div class="eyebrow"><span class="eyebrow-spark">✦</span> YOUR EVERYDAY AI COMPANION</div>
+    <h1>Confusing things.<br><span class="gradient-text">Clear answers.</span></h1>
+    <p>Documents ho, homework ho ya koi confusing question — SamjhaDo makes it easier to understand, one step at a time.</p>
+    <div class="trust-row">
+        <span class="trust-chip">✦ Simple explanations</span>
+        <span class="trust-chip">📄 Document help</span>
+        <span class="trust-chip">💬 Everyday questions</span>
     </div>
+</section>
 
-
-    <div
-        class="messages"
-        id="messages">
-
-        <div
-            class="message ai"
-            id="welcomeMessage">
-
-            <div class="message-bubble">
-
-                Bhai 👋 main SamjhaDo hoon.
-
-                <br><br>
-
-                Kuch bhi samajh nahi aa raha ho toh pooch le —
-                ya photo bhej de, main simple language mein samjha dunga.
-
+<main>
+<section class="workspace">
+    <div class="chat-shell">
+        <div class="chat-inner">
+            <div class="chat-top">
+                <div class="chat-identity">
+                    <div class="ai-avatar">✦</div>
+                    <div style="min-width:0">
+                        <div class="chat-name" id="chatTitle">New Conversation</div>
+                        <div class="chat-caption">SamjhaDo AI · Here to help</div>
+                    </div>
+                </div>
+                <div class="chat-status" id="chatStatus">Ready when you are</div>
             </div>
 
+            <div class="messages" id="messages">
+                <div class="message ai">
+                    <div class="message-bubble">Hey bhai 👋 Welcome to SamjhaDo!<br><br>Ask me anything, tell me what you're stuck on, or upload a document below. I'll try to explain it in simple language.</div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <textarea id="messageInput" placeholder="Ask anything... (Enter to send)" rows="1" aria-label="Your message"></textarea>
+                <button class="send-btn" id="sendBtn" type="button">Send ↗</button>
+            </div>
+            <div class="chat-footnote">AI can make mistakes. Check important information when needed.</div>
+        </div>
+    </div>
+</section>
+
+<section class="section-heading">
+    <h2>Bring it to <span class="gradient-text">SamjhaDo.</span></h2>
+    <p>Upload a photo or PDF and let AI help you understand it.</p>
+</section>
+
+<section class="upload-grid">
+    <!-- IMAGE CARD -->
+    <div class="upload-card">
+        <div class="upload-icon">📸</div>
+        <h3>Understand a photo</h3>
+        <p>Upload bills, screenshots, homework, forms or other readable images.</p>
+        <div class="upload-tag">JPG · PNG · WEBP</div>
+
+        <label for="photoInput" class="choose-btn" id="choosePhotoBtn">＋ Choose a photo</label>
+        <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp">
+
+        <div class="file-name" id="photoFileName"></div>
+        <div id="previewArea">
+            <img id="previewImage" alt="Selected image preview">
+        </div>
+        <input type="text" id="photoQuestion" class="photo-question" placeholder="What should I look for in this photo?">
+        <button class="analyze-btn" id="analyzeBtn" type="button" disabled>✦ Analyze photo</button>
+
+        <div class="usage-pill" id="photoUsage">📸 Checking free photo usage...</div>
+        <div class="limit-box" id="photoLimitBox">
+            Your 10 free photo analyses for the last 24 hours have been used.
+            <br><button class="upgrade-btn" id="upgradeBtn" type="button">Upgrade — coming soon</button>
+        </div>
+        <div class="file-status" id="photoStatus" role="status" aria-live="polite"></div>
+    </div>
+
+    <!-- PDF CARD -->
+    <div class="upload-card">
+        <div class="upload-icon">📄</div>
+        <h3>Understand a PDF</h3>
+        <p>Get help with text-based bills, notes, letters, forms and documents.</p>
+        <div class="upload-tag">PDF DOCUMENTS</div>
+
+        <label for="pdfInput" class="choose-btn">＋ Choose a PDF</label>
+        <input type="file" id="pdfInput" accept=".pdf,application/pdf">
+
+        <div class="pdf-limit-note">
+            <strong>📄 PDF Upload Limit: 2 MB</strong><br>
+            PDF file 2 MB ya usse chhoti honi chahiye. Badi file upload karne par processing mein problem aa sakti hai. Best results ke liye chhoti, clear PDF upload karein. Scanned PDFs ke liye OCR ki zaroorat ho sakti hai.
         </div>
 
+        <div class="file-name" id="pdfFileName">No PDF selected.</div>
+        <input type="text" id="pdfQuestion" class="photo-question" placeholder="What would you like to understand?">
+        <button class="analyze-btn" id="analyzePdfBtn" type="button" disabled>✦ Analyze PDF</button>
+        <div class="file-status" id="pdfStatus" role="status" aria-live="polite"></div>
+    </div>
+</section>
+
+<section>
+    <div class="features-title">
+        <h2>One place. <span class="gradient-text">Less confusion.</span></h2>
+        <p>Made for everyday questions and real-life tasks.</p>
     </div>
 
-
-    <div class="input-area">
-
-        <textarea
-            id="messageInput"
-            placeholder="Kuch bhi poochho..."
-            rows="1"></textarea>
-
-        <button
-            class="send-btn"
-            id="sendBtn"
-            type="button">
-            Send
-        </button>
-
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🎓</div>
+            <h3>Student life</h3>
+            <p>Understand questions, maths, notes and difficult topics step by step.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📑</div>
+            <h3>Documents</h3>
+            <p>Make sense of bills, notices, forms and everyday paperwork.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💼</div>
+            <h3>Office work</h3>
+            <p>Get help understanding invoices, screenshots and work documents.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3>Everyday chat</h3>
+            <p>Ask questions, translate, write, calculate or brainstorm ideas.</p>
+        </div>
     </div>
+</section>
 
+<div class="memory-note">🧠 Your recent chats can be revisited through History. Personal long-term memory is not currently enabled.</div>
+
+<footer>Made to make things clearer · <span class="footer-brand">SamjhaDo</span> © 2026</footer>
 </div>
 
-
-<!-- =========================
-     PHOTO
-========================= -->
-
-<div class="photo-section">
-
-    <div class="photo-icon">
-        📸
-    </div>
-
-    <h2>
-        Photo se bhi SamjhaDo
-    </h2>
-
-    <p>
-        Bill, document, homework, screenshot, form,
-        notice ya koi bhi readable photo upload karo.
-    </p>
-
-
-    <div
-        class="photo-usage"
-        id="photoUsage">
-        📸 Free photos: checking...
-    </div>
-
-
-    <div
-        class="photo-limit-box"
-        id="photoLimitBox">
-
-        <div class="photo-limit-title">
-            🚫 Free photo limit khatam
-        </div>
-
-        <div class="photo-limit-text">
-            24 hours mein 10 free photo analyses complete ho gaye hain.
-            Aur photos analyze karne ke liye upgrade ki zarurat hogi.
-        </div>
-
-        <button
-            class="upgrade-btn"
-            id="upgradeBtn"
-            type="button">
-            💎 Upgrade — Coming Soon
-        </button>
-
-    </div>
-
-
-    <label
-        for="photoInput"
-        class="choose-btn"
-        id="choosePhotoBtn">
-        📷 Choose Photo
-    </label>
-
-    <input
-        type="file"
-        id="photoInput"
-        accept="image/*">
-
-
-    <div id="previewArea">
-
-        <img
-            id="previewImage"
-            alt="Selected image">
-
-        <input
-            type="text"
-            id="photoQuestion"
-            class="photo-question"
-            placeholder="Is photo ke baare mein kya jaan na hai?">
-
-        <button
-            type="button"
-            class="analyze-btn"
-            id="analyzeBtn">
-            🔍 SamjhaDo
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- =========================
-     FEATURES
-========================= -->
-
-<div class="section-title">
-
-    <h2>
-        SamjhaDo kis kaam aayega?
-    </h2>
-
-    <p>
-        Students aur office users ke everyday kaam ke liye.
-    </p>
-
-</div>
-
-
-<div class="cards">
-
-    <div class="card">
-
-        <div class="card-icon">
-            🎓
-        </div>
-
-        <h3>
-            Students
-        </h3>
-
-        <p>
-            Homework, maths, questions, notes aur assignments
-            simple steps mein samjho.
-        </p>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-icon">
-            📄
-        </div>
-
-        <h3>
-            Documents
-        </h3>
-
-        <p>
-            Bills, forms, notices, letters aur documents
-            ka simple meaning samjho.
-        </p>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-icon">
-            💼
-        </div>
-
-        <h3>
-            Office Work
-        </h3>
-
-        <p>
-            Invoices, screenshots, emails aur office documents
-            ko easily understand karo.
-        </p>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-icon">
-            💬
-        </div>
-
-        <h3>
-            Normal Chat
-        </h3>
-
-        <p>
-            Maths, translation, writing ya koi bhi normal
-            question directly poochho.
-        </p>
-
-    </div>
-
-</div>
-
-
-<div class="memory-note">
-
-    🧠 Important preferences aur long-term details ko SamjhaDo
-    memory mein rakh sakta hai. New Chat par purani conversation
-    automatically open nahi hoti.
-
-</div>
-
-
-<footer>
-
-    © 2026 SamjhaDo · Simple answers for everyday problems
-
-</footer>
-
-</div>
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
+"use strict";
 
 /* =========================
-   CONFIG
+   CONFIGURATION
 ========================= */
+const WORKER_URL = "https://samjhado-ai.tusharbhatia0102.workers.dev/";
+const SESSION_KEY = "samjhado_current_session";
+const VISITOR_KEY = "samjhado_visitor_id";
 
-const WORKER_URL =
-    "https://samjhado-ai.tusharbhatia0102.workers.dev/";
-
-const SESSION_KEY =
-    "samjhado_current_session";
-
-const VISITOR_KEY =
-    "samjhado_visitor_id";
-
-const PHOTO_LIMIT =
-    10;
-
-
-/* =========================
-   VARIABLES
-========================= */
+const PHOTO_LIMIT = 10;
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_PDF_BYTES = 2 * 1024 * 1024;
+const MAX_PDF_TEXT_CHARS = 30000;
+const MAX_PDF_PAGES = 20;
 
 let currentSessionId = null;
-
-let currentChatTitle = "New Chat";
-
+let currentChatTitle = "New Conversation";
 let selectedImage = null;
-
-let photoBusy = false;
-
+let selectedPdf = null;
 let chatBusy = false;
+let photoBusy = false;
+let pdfBusy = false;
 
+const $ = id => document.getElementById(id);
 
-/* =========================
-   VISITOR ID
-========================= */
-
-function createVisitorId() {
-
-    return crypto.randomUUID();
-
+if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 }
 
+/* =========================
+   SAFE HELPERS
+========================= */
+function newId() {
+    if (window.crypto && typeof crypto.randomUUID === "function") {
+        return crypto.randomUUID();
+    }
+    return "sid-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+}
 
 function getVisitorId() {
-
-    let id =
-        localStorage.getItem(
-            VISITOR_KEY
-        );
-
-
-    if (!id) {
-
-        id =
-            createVisitorId();
-
-
-        localStorage.setItem(
-            VISITOR_KEY,
-            id
-        );
-
-    }
-
-
-    return id;
-
-}
-
-
-/* =========================
-   PHOTO USAGE UI
-========================= */
-
-function updatePhotoUsageUI(
-    used
-) {
-
-    used =
-        Number(used || 0);
-
-
-    const remaining =
-        Math.max(
-            0,
-            PHOTO_LIMIT - used
-        );
-
-
-    const usageBox =
-        document.getElementById(
-            "photoUsage"
-        );
-
-
-    const limitBox =
-        document.getElementById(
-            "photoLimitBox"
-        );
-
-
-    const chooseBtn =
-        document.getElementById(
-            "choosePhotoBtn"
-        );
-
-
-    if (used >= PHOTO_LIMIT) {
-
-        usageBox.textContent =
-            "📸 Free photos: 10/10 used";
-
-
-        limitBox.classList.add(
-            "show"
-        );
-
-
-        chooseBtn.style.opacity =
-            "0.45";
-
-        chooseBtn.style.pointerEvents =
-            "none";
-
-        return;
-
-    }
-
-
-    usageBox.textContent =
-        "📸 Free photos: " +
-        used +
-        "/" +
-        PHOTO_LIMIT +
-        " used · " +
-        remaining +
-        " left";
-
-
-    limitBox.classList.remove(
-        "show"
-    );
-
-
-    chooseBtn.style.opacity =
-        "1";
-
-    chooseBtn.style.pointerEvents =
-        "auto";
-
-}
-
-
-async function loadPhotoUsage() {
-
     try {
-
-        const visitorId =
-            getVisitorId();
-
-
-        const response =
-            await fetch(
-
-                WORKER_URL +
-                "?action=photoUsage&visitorId=" +
-                encodeURIComponent(
-                    visitorId
-                )
-
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            data.success &&
-            data.photoUsage
-        ) {
-
-            updatePhotoUsageUI(
-                data.photoUsage.used
-            );
-
-            return data.photoUsage;
-
+        let id = localStorage.getItem(VISITOR_KEY);
+        if (!id) {
+            id = newId();
+            localStorage.setItem(VISITOR_KEY, id);
         }
-
-
-    } catch (error) {
-
-        console.error(
-            "Photo usage error:",
-            error
-        );
-
+        return id;
+    } catch {
+        return newId();
     }
-
-
-    return null;
-
 }
-
-
-/* =========================
-   SESSION
-========================= */
-
-function createSessionId() {
-
-    return crypto.randomUUID();
-
-}
-
 
 function getCurrentSessionId() {
-
-    let id =
-        localStorage.getItem(
-            SESSION_KEY
-        );
-
-
-    if (!id) {
-
-        id =
-            createSessionId();
-
-
-        localStorage.setItem(
-            SESSION_KEY,
-            id
-        );
-
+    try {
+        let id = localStorage.getItem(SESSION_KEY);
+        if (!id) {
+            id = newId();
+            localStorage.setItem(SESSION_KEY, id);
+        }
+        return id;
+    } catch {
+        return newId();
     }
-
-
-    return id;
-
 }
-
 
 function setCurrentSessionId(id) {
-
     currentSessionId = id;
-
-    localStorage.setItem(
-        SESSION_KEY,
-        id
-    );
-
-}
-
-
-/* =========================
-   FORMAT TEXT
-========================= */
-
-function formatText(text) {
-
-    if (!text) {
-        return "";
-    }
-
-
-    return String(text)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /\n/g,
-            "<br>"
-        );
-
-}
-
-
-/* =========================
-   ADD MESSAGE
-========================= */
-
-function addMessage(
-    text,
-    type
-) {
-
-    const messages =
-        document.getElementById(
-            "messages"
-        );
-
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-
-    wrapper.className =
-        "message " + type;
-
-
-    const bubble =
-        document.createElement(
-            "div"
-        );
-
-
-    bubble.className =
-        "message-bubble";
-
-
-    bubble.innerHTML =
-        formatText(text);
-
-
-    wrapper.appendChild(
-        bubble
-    );
-
-
-    messages.appendChild(
-        wrapper
-    );
-
-
-    messages.scrollTop =
-        messages.scrollHeight;
-
-
-    return bubble;
-
-}
-
-
-/* =========================
-   CLEAR CHAT UI
-========================= */
-
-function clearChatUI() {
-
-    const messages =
-        document.getElementById(
-            "messages"
-        );
-
-
-    messages.innerHTML = `
-
-        <div class="message ai">
-
-            <div class="message-bubble">
-
-                Bhai 👋 main SamjhaDo hoon.
-
-                <br><br>
-
-                Ye ek fresh chat hai.
-                Purani chats yahan automatically load nahi hoti.
-
-            </div>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================
-   NEW CHAT
-========================= */
-
-function startNewChat() {
-
-    if (chatBusy || photoBusy) {
-        return;
-    }
-
-
-    const newId =
-        createSessionId();
-
-
-    setCurrentSessionId(
-        newId
-    );
-
-
-    currentChatTitle =
-        "New Chat";
-
-
-    document
-        .getElementById(
-            "chatTitle"
-        )
-        .textContent =
-        "New Chat";
-
-
-    document
-        .getElementById(
-            "chatStatus"
-        )
-        .textContent =
-        "Fresh conversation";
-
-
-    clearChatUI();
-
-
-    document
-        .getElementById(
-            "messageInput"
-        )
-        .value = "";
-
-
-    document
-        .getElementById(
-            "memoryLane"
-        )
-        .classList.remove(
-            "open"
-        );
-
-
-    selectedImage = null;
-
-
-    document
-        .getElementById(
-            "photoInput"
-        )
-        .value = "";
-
-
-    document
-        .getElementById(
-            "previewArea"
-        )
-        .style.display =
-        "none";
-
-
-    document
-        .getElementById(
-            "photoQuestion"
-        )
-        .value = "";
-
-}
-
-
-/* =========================
-   LOAD CURRENT CHAT
-========================= */
-
-async function loadCurrentChat() {
-
-    currentSessionId =
-        getCurrentSessionId();
-
-
     try {
-
-        const response =
-            await fetch(
-
-                WORKER_URL +
-                "?action=messages&sessionId=" +
-                encodeURIComponent(
-                    currentSessionId
-                )
-
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !data.success ||
-            !data.messages ||
-            data.messages.length === 0
-        ) {
-
-            clearChatUI();
-
-            return;
-
-        }
-
-
-        const messages =
-            document.getElementById(
-                "messages"
-            );
-
-
-        messages.innerHTML = "";
-
-
-        data.messages.forEach(
-            item => {
-
-                addMessage(
-                    item.message,
-                    item.role === "user"
-                        ? "user"
-                        : "ai"
-                );
-
-            }
-        );
-
-
-        const firstUserMessage =
-            data.messages.find(
-                item =>
-                    item.role === "user"
-            );
-
-
-        if (firstUserMessage) {
-
-            currentChatTitle =
-                makeTitle(
-                    firstUserMessage.message
-                );
-
-
-            document
-                .getElementById(
-                    "chatTitle"
-                )
-                .textContent =
-                currentChatTitle;
-
-
-            document
-                .getElementById(
-                    "chatStatus"
-                )
-                .textContent =
-                "Conversation loaded";
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Current chat load error:",
-            error
-        );
-
-    }
-
+        localStorage.setItem(SESSION_KEY, id);
+    } catch {}
 }
 
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
-/* =========================
-   MAKE CHAT TITLE
-========================= */
+function formatText(value) {
+    return escapeHTML(value).replace(/\n/g, "<br>");
+}
+
+function setStatus(id, message) {
+    $(id).textContent = message || "";
+}
+
+function setThinking(bubble, text) {
+    bubble.innerHTML =
+        '<span class="thinking">' + escapeHTML(text) +
+        '<span class="thinking-dots"><span></span><span></span><span></span></span></span>';
+}
 
 function makeTitle(text) {
-
-    if (!text) {
-        return "New Chat";
-    }
-
-
-    let title =
-        String(text)
-            .replace(/\s+/g, " ")
-            .trim();
-
-
-    if (title.length > 42) {
-
-        title =
-            title.substring(
-                0,
-                42
-            ) + "...";
-
-    }
-
-
-    return title;
-
+    const clean = String(text || "").replace(/\s+/g, " ").trim();
+    if (!clean) return "New Conversation";
+    return clean.length > 42 ? clean.slice(0, 42) + "..." : clean;
 }
 
+function addMessage(text, type) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "message " + (type === "user" ? "user" : "ai");
+
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble";
+    bubble.innerHTML = formatText(text);
+
+    wrapper.appendChild(bubble);
+    $("messages").appendChild(wrapper);
+    $("messages").scrollTop = $("messages").scrollHeight;
+
+    return bubble;
+}
+
+function setChatTitle(text) {
+    currentChatTitle = makeTitle(text);
+    $("chatTitle").textContent = currentChatTitle;
+    $("chatStatus").textContent = "Active conversation";
+}
+
+function setButtonsBusy() {
+    $("sendBtn").disabled = chatBusy;
+    $("analyzeBtn").disabled = photoBusy || !selectedImage;
+    $("analyzePdfBtn").disabled = pdfBusy || !selectedPdf;
+    $("newChatBtn").disabled = chatBusy || photoBusy || pdfBusy;
+}
+
+async function readResponse(response) {
+    try {
+        return await response.json();
+    } catch {
+        throw new Error("Server ka response read nahi ho paaya. Dobara try karo.");
+    }
+}
 
 /* =========================
-   DATE FORMAT — IST
+   PHOTO USAGE
 ========================= */
+function updatePhotoUsageUI(used) {
+    used = Number(used || 0);
+    const remaining = Math.max(0, PHOTO_LIMIT - used);
 
-function formatDate(dateString) {
+    $("photoUsage").textContent =
+        "📸 Free photo analyses: " + used + "/" + PHOTO_LIMIT +
+        " used · " + remaining + " left";
 
-    if (!dateString) {
-        return "";
+    const exhausted = used >= PHOTO_LIMIT;
+    $("photoLimitBox").classList.toggle("show", exhausted);
+    $("choosePhotoBtn").style.opacity = exhausted ? ".45" : "1";
+    $("choosePhotoBtn").style.pointerEvents = exhausted ? "none" : "auto";
+
+    if (exhausted) {
+        $("analyzeBtn").disabled = true;
+    } else if (selectedImage && !photoBusy) {
+        $("analyzeBtn").disabled = false;
     }
+}
 
+async function loadPhotoUsage() {
+    try {
+        const url = WORKER_URL + "?action=photoUsage&visitorId=" +
+            encodeURIComponent(getVisitorId());
 
-    const date =
-        new Date(
-            dateString.replace(
-                " ",
-                "T"
-            ) + "Z"
-        );
+        const response = await fetch(url);
+        const data = await readResponse(response);
 
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return "";
-
-    }
-
-
-    return date.toLocaleString(
-        "en-IN",
-        {
-            timeZone: "Asia/Kolkata",
-            day: "numeric",
-            month: "short",
-            hour: "numeric",
-            minute: "2-digit"
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Usage check failed.");
         }
-    );
 
+        if (data.photoUsage) {
+            updatePhotoUsageUI(data.photoUsage.used);
+            return data.photoUsage;
+        }
+    } catch (error) {
+        console.error("Photo usage check failed:", error);
+        $("photoUsage").textContent = "📸 Photo usage unavailable";
+    }
+    return null;
 }
 
-
 /* =========================
-   LOAD MEMORY LANE
+   CHAT HISTORY
 ========================= */
+function clearChatUI() {
+    $("messages").innerHTML = "";
+    addMessage(
+        "Hey bhai 👋 Welcome to SamjhaDo!\n\nAsk me anything, tell me what you're stuck on, or upload a document below. I'll try to explain it in simple language.",
+        "ai"
+    );
+}
 
-async function loadMemoryLane() {
-
-    const track =
-        document.getElementById(
-            "memoryTrack"
-        );
-
-
-    track.innerHTML = `
-
-        <div class="memory-empty">
-            Chats load ho rahi hain...
-        </div>
-
-    `;
-
+async function loadCurrentChat() {
+    setCurrentSessionId(getCurrentSessionId());
 
     try {
+        const response = await fetch(
+            WORKER_URL + "?action=messages&sessionId=" +
+            encodeURIComponent(currentSessionId)
+        );
 
-        const response =
-            await fetch(
+        const data = await readResponse(response);
 
-                WORKER_URL +
-                "?action=chats"
-
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !data.success ||
-            !data.chats ||
-            data.chats.length === 0
-        ) {
-
-            track.innerHTML = `
-
-                <div class="memory-empty">
-                    Abhi koi previous chat nahi hai.
-                </div>
-
-            `;
-
-            return;
-
+        if (!response.ok || !data.success || !Array.isArray(data.messages)) {
+            throw new Error(data.error || "Could not load chat.");
         }
 
+        if (!data.messages.length) {
+            clearChatUI();
+            $("chatTitle").textContent = "New Conversation";
+            $("chatStatus").textContent = "Ready when you are";
+            return;
+        }
+
+        $("messages").innerHTML = "";
+        data.messages.forEach(item => {
+            addMessage(item.message, item.role === "user" ? "user" : "ai");
+        });
+
+        const firstUser = data.messages.find(item => item.role === "user");
+        if (firstUser) setChatTitle(firstUser.message);
+
+        $("chatStatus").textContent = "Conversation restored";
+    } catch (error) {
+        console.error("Chat restore failed:", error);
+        clearChatUI();
+        $("chatStatus").textContent = "Could not restore history";
+    }
+}
+
+function formatDate(value) {
+    if (!value) return "";
+    let date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        date = new Date(String(value).replace(" ", "T") + "Z");
+    }
+
+    if (Number.isNaN(date.getTime())) return "";
+
+    return date.toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        day: "numeric",
+        month: "short",
+        hour: "numeric",
+        minute: "2-digit"
+    });
+}
+
+async function loadMemoryLane() {
+    const track = $("memoryTrack");
+    track.innerHTML = '<div class="memory-empty">Loading your chats...</div>';
+
+    try {
+        const response = await fetch(WORKER_URL + "?action=chats");
+        const data = await readResponse(response);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Could not load chats.");
+        }
+
+        if (!Array.isArray(data.chats) || !data.chats.length) {
+            track.innerHTML = '<div class="memory-empty">No previous chats found yet.</div>';
+            return;
+        }
 
         track.innerHTML = "";
 
+        data.chats.forEach(chat => {
+            const sessionId = chat.sessionId || chat.session_id;
+            if (!sessionId) return;
 
-        data.chats.forEach(
-            chat => {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "memory-card";
+            card.style.textAlign = "left";
+            card.style.color = "inherit";
 
-                const card =
-                    document.createElement(
-                        "div"
-                    );
+            const icon = document.createElement("div");
+            icon.className = "memory-card-icon";
+            icon.textContent = "💬";
 
+            const title = document.createElement("div");
+            title.className = "memory-card-title";
+            title.textContent = makeTitle(chat.title || "Conversation");
 
-                card.className =
-                    "memory-card";
+            const preview = document.createElement("div");
+            preview.className = "memory-card-preview";
+            preview.textContent = chat.preview || "Open conversation";
 
+            const date = document.createElement("div");
+            date.className = "memory-card-date";
+            date.textContent = formatDate(chat.updatedAt || chat.last_updated);
 
-                const top =
-                    document.createElement(
-                        "div"
-                    );
+            card.append(icon, title, preview, date);
+            card.addEventListener("click", () => openPreviousChat(sessionId, chat.title));
+            track.appendChild(card);
+        });
 
-
-                top.className =
-                    "memory-card-top";
-
-
-                const icon =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                icon.className =
-                    "memory-card-icon";
-
-
-                icon.textContent =
-                    "💬";
-
-
-                const arrow =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                arrow.className =
-                    "memory-card-arrow";
-
-
-                arrow.textContent =
-                    "↗";
-
-
-                top.appendChild(
-                    icon
-                );
-
-
-                top.appendChild(
-                    arrow
-                );
-
-
-                const title =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                title.className =
-                    "memory-card-title";
-
-
-                title.textContent =
-                    makeTitle(
-                        chat.title
-                    );
-
-
-                const preview =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                preview.className =
-                    "memory-card-preview";
-
-
-                preview.textContent =
-                    chat.preview ||
-                    "Conversation";
-
-
-                const date =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                date.className =
-                    "memory-card-date";
-
-
-                date.textContent =
-                    formatDate(
-                        chat.last_updated
-                    );
-
-
-                card.appendChild(
-                    top
-                );
-
-
-                card.appendChild(
-                    title
-                );
-
-
-                card.appendChild(
-                    preview
-                );
-
-
-                card.appendChild(
-                    date
-                );
-
-
-                card.addEventListener(
-                    "click",
-                    function() {
-
-                        openPreviousChat(
-                            chat.session_id,
-                            chat.title
-                        );
-
-                    }
-                );
-
-
-                track.appendChild(
-                    card
-                );
-
-            }
-        );
-
-
+        if (!track.children.length) {
+            track.innerHTML = '<div class="memory-empty">No chats available.</div>';
+        }
     } catch (error) {
-
-        console.error(
-            "Memory Lane error:",
-            error
-        );
-
-
-        track.innerHTML = `
-
-            <div class="memory-empty">
-                Chats load nahi ho paayi 😭
-            </div>
-
-        `;
-
+        console.error("Memory Lane error:", error);
+        track.innerHTML = '<div class="memory-empty">Could not load chats. Please try again.</div>';
     }
-
 }
 
+async function openPreviousChat(sessionId, title) {
+    if (chatBusy || photoBusy || pdfBusy) return;
 
-/* =========================
-   OPEN PREVIOUS CHAT
-========================= */
-
-async function openPreviousChat(
-    sessionId,
-    title
-) {
-
-    if (chatBusy || photoBusy) {
-        return;
-    }
-
-
-    setCurrentSessionId(
-        sessionId
-    );
-
-
-    currentChatTitle =
-        makeTitle(title);
-
-
-    document
-        .getElementById(
-            "chatTitle"
-        )
-        .textContent =
-        currentChatTitle;
-
-
-    document
-        .getElementById(
-            "chatStatus"
-        )
-        .textContent =
-        "Previous chat";
-
-
-    const messages =
-        document.getElementById(
-            "messages"
-        );
-
-
-    messages.innerHTML = `
-
-        <div class="message ai">
-
-            <div class="message-bubble">
-
-                Purani chat load ho rahi hai... ⏳
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    document
-        .getElementById(
-            "memoryLane"
-        )
-        .classList.remove(
-            "open"
-        );
-
+    setCurrentSessionId(sessionId);
+    $("memoryLane").classList.remove("open");
+    $("chatTitle").textContent = makeTitle(title || "Conversation");
+    $("chatStatus").textContent = "Loading conversation...";
+    $("messages").innerHTML = "";
+    addMessage("Loading your previous conversation...", "ai");
 
     try {
+        const response = await fetch(
+            WORKER_URL + "?action=messages&sessionId=" +
+            encodeURIComponent(sessionId)
+        );
+        const data = await readResponse(response);
 
-        const response =
-            await fetch(
-
-                WORKER_URL +
-                "?action=messages&sessionId=" +
-                encodeURIComponent(
-                    sessionId
-                )
-
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !data.success ||
-            !data.messages
-        ) {
-
-            throw new Error(
-                "Chat load nahi hui."
-            );
-
+        if (!response.ok || !data.success || !Array.isArray(data.messages)) {
+            throw new Error(data.error || "Chat could not be loaded.");
         }
 
+        $("messages").innerHTML = "";
 
-        messages.innerHTML = "";
-
-
-        data.messages.forEach(
-            item => {
-
-                addMessage(
-                    item.message,
-                    item.role === "user"
-                        ? "user"
-                        : "ai"
-                );
-
-            }
-        );
-
-
-        if (
-            data.messages.length === 0
-        ) {
-
+        if (!data.messages.length) {
             clearChatUI();
-
+        } else {
+            data.messages.forEach(item => {
+                addMessage(item.message, item.role === "user" ? "user" : "ai");
+            });
         }
 
+        $("chatStatus").textContent = "Previous conversation";
     } catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        messages.innerHTML = `
-
-            <div class="message ai">
-
-                <div class="message-bubble">
-
-                    Bhai ye chat load nahi ho paayi 😭
-
-                </div>
-
-            </div>
-
-        `;
-
+        console.error("Open chat failed:", error);
+        $("messages").innerHTML = "";
+        addMessage(error.message || "Could not load this conversation.", "ai");
+        $("chatStatus").textContent = "History unavailable";
     }
-
 }
 
+function startNewChat() {
+    if (chatBusy || photoBusy || pdfBusy) return;
+
+    setCurrentSessionId(newId());
+    currentChatTitle = "New Conversation";
+    $("chatTitle").textContent = currentChatTitle;
+    $("chatStatus").textContent = "Ready when you are";
+    $("memoryLane").classList.remove("open");
+    $("messageInput").value = "";
+    clearChatUI();
+}
 
 /* =========================
-   SEND MESSAGE
+   TEXT CHAT
 ========================= */
-
 async function sendMessage() {
+    if (chatBusy || photoBusy || pdfBusy) return;
 
-    if (chatBusy) {
-        return;
-    }
+    const input = $("messageInput");
+    const message = input.value.trim();
+    if (!message) return;
 
-
-    const input =
-        document.getElementById(
-            "messageInput"
-        );
-
-
-    const sendBtn =
-        document.getElementById(
-            "sendBtn"
-        );
-
-
-    const message =
-        input.value.trim();
-
-
-    if (!message) {
-        return;
-    }
-
-
-    if (!currentSessionId) {
-
-        setCurrentSessionId(
-            createSessionId()
-        );
-
-    }
-
+    if (!currentSessionId) setCurrentSessionId(newId());
 
     chatBusy = true;
-
-    sendBtn.disabled = true;
-
+    setButtonsBusy();
     input.value = "";
 
+    addMessage(message, "user");
+    if (currentChatTitle === "New Conversation") setChatTitle(message);
 
-    addMessage(
-        message,
-        "user"
-    );
-
-
-    if (
-        currentChatTitle === "New Chat"
-    ) {
-
-        currentChatTitle =
-            makeTitle(
-                message
-            );
-
-
-        document
-            .getElementById(
-                "chatTitle"
-            )
-            .textContent =
-            currentChatTitle;
-
-
-        document
-            .getElementById(
-                "chatStatus"
-            )
-            .textContent =
-            "Active conversation";
-
-    }
-
-
-    const loading =
-        addMessage(
-            "",
-            "ai"
-        );
-
-
-    loading.innerHTML = `
-
-        <span class="thinking">
-
-            Soch raha hoon bhai... 🤔
-
-            <span class="thinking-dots">
-
-                <span></span>
-                <span></span>
-                <span></span>
-
-            </span>
-
-        </span>
-
-    `;
-
+    const loading = addMessage("", "ai");
+    setThinking(loading, "SamjhaDo is thinking");
 
     try {
+        const response = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message,
+                sessionId: currentSessionId
+            })
+        });
 
-        const response =
-            await fetch(
+        const data = await readResponse(response);
 
-                WORKER_URL,
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "AI could not answer this message.");
+        }
 
-                {
+        if (data.sessionId) setCurrentSessionId(data.sessionId);
 
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            message:
-                                message,
-
-                            sessionId:
-                                currentSessionId
-
-                        })
-
-                }
-
-            );
-
-
-        const data =
-            await response.json();
-
-
-        const answer =
-
-            data.response ||
-
-            data.result?.response ||
-
-            data.text ||
-
-            data.result?.text ||
-
-            data.error ||
-
-            "AI ne response nahi diya.";
-
-
-        loading.innerHTML =
-            formatText(
-                answer
-            );
-
-
+        loading.innerHTML = formatText(data.response || "AI ne response nahi diya.");
+        $("chatStatus").textContent = "Response received";
     } catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        loading.innerHTML =
-
-            "Bhai, AI se connection mein problem aa gayi 😭" +
-
-            "<br><br>" +
-
-            "Thodi der baad dobara try kar.";
-
+        console.error("Chat request failed:", error);
+        loading.textContent = error.message || "Connection problem. Please try again.";
+        $("chatStatus").textContent = "Request failed";
+    } finally {
+        chatBusy = false;
+        setButtonsBusy();
     }
-
-
-    chatBusy = false;
-
-    sendBtn.disabled = false;
-
 }
 
+$("sendBtn").addEventListener("click", sendMessage);
+
+$("messageInput").addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+});
+
+$("newChatBtn").addEventListener("click", startNewChat);
+
+$("memoryLaneBtn").addEventListener("click", () => {
+    $("memoryLane").classList.toggle("open");
+    if ($("memoryLane").classList.contains("open")) loadMemoryLane();
+});
+
+$("closeMemory").addEventListener("click", () => {
+    $("memoryLane").classList.remove("open");
+});
 
 /* =========================
-   SEND BUTTON
+   IMAGE UPLOAD
 ========================= */
+$("photoInput").addEventListener("change", async event => {
+    const file = event.target.files && event.target.files[0];
 
-document
-    .getElementById(
-        "sendBtn"
-    )
-    .addEventListener(
-        "click",
-        sendMessage
-    );
+    selectedImage = null;
+    $("previewArea").style.display = "none";
+    $("previewImage").removeAttribute("src");
+    $("photoFileName").textContent = "";
+    $("photoStatus").textContent = "";
+    $("analyzeBtn").disabled = true;
 
+    if (!file) return;
 
-/* =========================
-   ENTER TO SEND
-========================= */
+    const validType = ["image/jpeg", "image/png", "image/webp"].includes(file.type);
 
-document
-    .getElementById(
-        "messageInput"
-    )
-    .addEventListener(
-        "keydown",
-        function(event) {
+    if (!validType) {
+        $("photoStatus").textContent = "Choose a JPG, PNG or WEBP image.";
+        event.target.value = "";
+        return;
+    }
 
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
+    if (file.size > MAX_IMAGE_BYTES) {
+        $("photoStatus").textContent = "Image is too large. Please choose an image under 5 MB.";
+        event.target.value = "";
+        return;
+    }
 
-                event.preventDefault();
+    const usage = await loadPhotoUsage();
+    if (usage && Number(usage.used) >= PHOTO_LIMIT) {
+        $("photoStatus").textContent = "Your current photo limit has been reached.";
+        event.target.value = "";
+        return;
+    }
 
-                sendMessage();
+    selectedImage = file;
+    $("photoFileName").textContent =
+        file.name + " · " + (file.size / 1024).toFixed(1) + " KB";
 
-            }
+    const reader = new FileReader();
 
-        }
-    );
+    reader.onload = () => {
+        $("previewImage").src = reader.result;
+        $("previewArea").style.display = "block";
+        $("analyzeBtn").disabled = false;
+    };
 
+    reader.onerror = () => {
+        selectedImage = null;
+        $("photoStatus").textContent = "Could not read this image.";
+    };
 
-/* =========================
-   PHOTO SELECT
-========================= */
-
-document
-    .getElementById(
-        "photoInput"
-    )
-    .addEventListener(
-        "change",
-        async function(event) {
-
-            const file =
-                event.target.files[0];
-
-
-            if (!file) {
-                return;
-            }
-
-
-            const usage =
-                await loadPhotoUsage();
-
-
-            if (
-                usage &&
-                Number(usage.used) >= PHOTO_LIMIT
-            ) {
-
-                event.target.value = "";
-
-                selectedImage = null;
-
-                return;
-
-            }
-
-
-            selectedImage =
-                file;
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                function(e) {
-
-                    document
-                        .getElementById(
-                            "previewImage"
-                        )
-                        .src =
-                        e.target.result;
-
-
-                    document
-                        .getElementById(
-                            "previewArea"
-                        )
-                        .style.display =
-                        "block";
-
-
-                    document
-                        .getElementById(
-                            "photoQuestion"
-                        )
-                        .style.display =
-                        "block";
-
-                };
-
-
-            reader.readAsDataURL(
-                file
-            );
-
-        }
-    );
-
-
-/* =========================
-   ANALYZE PHOTO
-========================= */
+    reader.readAsDataURL(file);
+});
 
 async function analyzePhoto() {
-
-    if (photoBusy) {
-        return;
-    }
-
+    if (photoBusy || chatBusy || pdfBusy) return;
 
     if (!selectedImage) {
-
-        alert(
-            "Pehle photo choose kar bhai 😭"
-        );
-
+        setStatus("photoStatus", "Please choose a photo first.");
         return;
-
     }
 
-
-    if (!currentSessionId) {
-
-        setCurrentSessionId(
-            createSessionId()
-        );
-
-    }
-
-
-    /* =========================
-       CHECK CURRENT LIMIT
-    ========================= */
-
-    const usage =
-        await loadPhotoUsage();
-
-
-    if (
-        usage &&
-        Number(usage.used) >= PHOTO_LIMIT
-    ) {
-
-        updatePhotoUsageUI(
-            usage.used
-        );
-
+    const usage = await loadPhotoUsage();
+    if (usage && Number(usage.used) >= PHOTO_LIMIT) {
+        updatePhotoUsageUI(usage.used);
+        setStatus("photoStatus", "Your photo limit has been reached.");
         return;
-
     }
 
+    if (!currentSessionId) setCurrentSessionId(newId());
 
-    const question =
-        document
-            .getElementById(
-                "photoQuestion"
-            )
-            .value
-            .trim();
-
-
-    const userQuestion =
-        question ||
-        "Bhai ye photo samjha de.";
-
-
-    const analyzeBtn =
-        document.getElementById(
-            "analyzeBtn"
-        );
-
+    const question = $("photoQuestion").value.trim() ||
+        "Please explain this photo and its important details.";
 
     photoBusy = true;
+    setButtonsBusy();
+    $("analyzeBtn").textContent = "Analyzing...";
+    addMessage("📸 " + selectedImage.name + "\n" + question, "user");
 
-    analyzeBtn.disabled = true;
+    if (currentChatTitle === "New Conversation") setChatTitle(question);
 
-    analyzeBtn.innerHTML =
-        "🔍 Samajh raha hoon...";
-
-
-    addMessage(
-        userQuestion,
-        "user"
-    );
-
-
-    const loading =
-        addMessage(
-            "",
-            "ai"
-        );
-
-
-    loading.innerHTML = `
-
-        <span class="thinking">
-
-            Photo dekh raha hoon bhai... 👀
-
-            <span class="thinking-dots">
-
-                <span></span>
-                <span></span>
-                <span></span>
-
-            </span>
-
-        </span>
-
-    `;
-
+    const loading = addMessage("", "ai");
+    setThinking(loading, "Looking at your photo");
 
     try {
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload =
-            async function(e) {
-
-                try {
-
-                    const base64 =
-                        e.target.result;
-
-
-                    const response =
-                        await fetch(
-
-                            WORKER_URL,
-
-                            {
-
-                                method: "POST",
-
-                                headers: {
-
-                                    "Content-Type":
-                                        "application/json"
-
-                                },
-
-                                body:
-                                    JSON.stringify({
-
-                                        image:
-                                            base64,
-
-                                        message:
-                                            userQuestion,
-
-                                        sessionId:
-                                            currentSessionId,
-
-                                        visitorId:
-                                            getVisitorId()
-
-                                    })
-
-                            }
-
-                        );
-
-
-                    const data =
-                        await response.json();
-
-
-                    /* =========================
-                       LIMIT REACHED
-                    ========================= */
-
-                    if (
-                        response.status === 429 &&
-                        data.error ===
-                            "PHOTO_LIMIT_REACHED"
-                    ) {
-
-                        loading.innerHTML = `
-
-                            🚫 <b>Free photo limit khatam ho gayi.</b>
-
-                            <br><br>
-
-                            24 hours mein 10 free photo analyses
-                            complete ho gaye hain.
-
-                            <br><br>
-
-                            💎 Upgrade karke aur photos analyze karo.
-
-                        `;
-
-
-                        updatePhotoUsageUI(
-                            data.used || PHOTO_LIMIT
-                        );
-
-
-                        return;
-
-                    }
-
-
-                    const answer =
-
-                        data.response ||
-
-                        data.result?.response ||
-
-                        data.text ||
-
-                        data.result?.text ||
-
-                        data.error ||
-
-                        "Photo samajhne mein problem aa gayi.";
-
-
-                    loading.innerHTML =
-                        formatText(
-                            answer
-                        );
-
-
-                    if (
-                        data.photoUsage
-                    ) {
-
-                        updatePhotoUsageUI(
-                            data.photoUsage.used
-                        );
-
-                    } else {
-
-                        await loadPhotoUsage();
-
-                    }
-
-
-                    if (
-                        currentChatTitle ===
-                        "New Chat"
-                    ) {
-
-                        currentChatTitle =
-                            makeTitle(
-                                userQuestion
-                            );
-
-
-                        document
-                            .getElementById(
-                                "chatTitle"
-                            )
-                            .textContent =
-                            currentChatTitle;
-
-                    }
-
-
-                } catch (error) {
-
-                    console.error(
-                        error
-                    );
-
-
-                    loading.innerHTML =
-
-                        "Bhai photo analyze nahi ho paayi 😭" +
-
-                        "<br><br>" +
-
-                        "Ek baar dobara try kar.";
-
-                }
-
-
-                photoBusy = false;
-
-                analyzeBtn.disabled =
-                    false;
-
-                analyzeBtn.innerHTML =
-                    "🔍 SamjhaDo";
-
-            };
-
-
-        reader.readAsDataURL(
-            selectedImage
-        );
-
-
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error("Could not read the image."));
+            reader.readAsDataURL(selectedImage);
+        });
+
+        const response = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                image: base64,
+                message: question,
+                sessionId: currentSessionId,
+                visitorId: getVisitorId()
+            })
+        });
+
+        const data = await readResponse(response);
+
+        if (!response.ok || !data.success) {
+            if (data.photoUsage) updatePhotoUsageUI(data.photoUsage.used);
+            throw new Error(data.error || "Photo analysis failed.");
+        }
+
+        if (data.sessionId) setCurrentSessionId(data.sessionId);
+
+        loading.innerHTML = formatText(data.response || "AI ne response nahi diya.");
+
+        if (data.photoUsage) updatePhotoUsageUI(data.photoUsage.used);
+        else await loadPhotoUsage();
+
+        $("chatStatus").textContent = "Photo analysis complete";
+        setStatus("photoStatus", "Analysis complete.");
     } catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        loading.innerHTML =
-            "Bhai photo analyze nahi ho paayi 😭";
-
-
+        console.error("Photo analysis failed:", error);
+        loading.textContent = error.message || "Could not analyze this photo.";
+        setStatus("photoStatus", error.message || "Photo analysis failed.");
+        if (error.message && error.message.toLowerCase().includes("limit")) {
+            await loadPhotoUsage();
+        }
+    } finally {
         photoBusy = false;
-
-        analyzeBtn.disabled =
-            false;
-
-        analyzeBtn.innerHTML =
-            "🔍 SamjhaDo";
-
+        $("analyzeBtn").textContent = "✦ Analyze photo";
+        setButtonsBusy();
     }
-
 }
 
+$("analyzeBtn").addEventListener("click", analyzePhoto);
+
+$("upgradeBtn").addEventListener("click", () => {
+    alert("SamjhaDo subscription is coming soon.");
+});
 
 /* =========================
-   ANALYZE BUTTON
+   PDF TEXT EXTRACTION
 ========================= */
+$("pdfInput").addEventListener("change", event => {
+    const file = event.target.files && event.target.files[0];
 
-document
-    .getElementById(
-        "analyzeBtn"
-    )
-    .addEventListener(
-        "click",
-        analyzePhoto
-    );
+    selectedPdf = null;
+    $("analyzePdfBtn").disabled = true;
+    $("pdfStatus").textContent = "";
 
+    if (!file) {
+        $("pdfFileName").textContent = "No PDF selected.";
+        return;
+    }
 
-/* =========================
-   START FRESH BUTTON
-========================= */
+    const isPdf = file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf");
 
-document
-    .getElementById(
-        "newChatBtn"
-    )
-    .addEventListener(
-        "click",
-        startNewChat
-    );
+    if (!isPdf) {
+        $("pdfFileName").textContent = "Invalid file.";
+        $("pdfStatus").textContent = "Please select a PDF file.";
+        event.target.value = "";
+        return;
+    }
 
+    if (file.size > MAX_PDF_BYTES) {
+        $("pdfFileName").textContent = file.name;
+        $("pdfStatus").textContent =
+            "PDF 2 MB se badi hai. Chhoti PDF upload karo.";
+        event.target.value = "";
+        return;
+    }
 
-/* =========================
-   MEMORY LANE BUTTON
-========================= */
+    if (!file.size) {
+        $("pdfStatus").textContent = "This PDF file is empty.";
+        event.target.value = "";
+        return;
+    }
 
-document
-    .getElementById(
-        "memoryLaneBtn"
-    )
-    .addEventListener(
-        "click",
-        function() {
+    selectedPdf = file;
+    $("pdfFileName").textContent =
+        file.name + " · " + (file.size / 1024).toFixed(1) + " KB";
+    $("analyzePdfBtn").disabled = false;
+    $("pdfStatus").textContent = "PDF ready. Choose Analyze PDF to continue.";
+});
 
-            const lane =
-                document.getElementById(
-                    "memoryLane"
-                );
+async function extractPdfText(file) {
+    if (!window.pdfjsLib) {
+        throw new Error("PDF reader load nahi hua. Page refresh karke dobara try karo.");
+    }
 
+    if (file.size > MAX_PDF_BYTES) {
+        throw new Error("PDF upload limit 2 MB hai.");
+    }
 
-            lane.classList.toggle(
-                "open"
-            );
+    const buffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({
+        data: new Uint8Array(buffer)
+    }).promise;
 
+    if (pdf.numPages < 1) {
+        throw new Error("No readable pages found in this PDF.");
+    }
 
-            if (
-                lane.classList.contains(
-                    "open"
-                )
-            ) {
+    const pagesToRead = Math.min(pdf.numPages, MAX_PDF_PAGES);
+    const parts = [];
+    let characterCount = 0;
+    let truncated = pdf.numPages > pagesToRead;
 
-                loadMemoryLane();
+    for (let pageNumber = 1; pageNumber <= pagesToRead; pageNumber++) {
+        setStatus("pdfStatus", "Extracting text... Page " + pageNumber + "/" + pagesToRead);
 
-            }
+        const page = await pdf.getPage(pageNumber);
+        const content = await page.getTextContent();
+        const pageText = content.items
+            .map(item => typeof item.str === "string" ? item.str : "")
+            .filter(Boolean)
+            .join(" ");
 
+        if (!pageText.trim()) continue;
+
+        const remaining = MAX_PDF_TEXT_CHARS - characterCount;
+        if (remaining <= 0) {
+            truncated = true;
+            break;
         }
-    );
 
+        const text = pageText.slice(0, remaining);
+        if (text.length < pageText.length) truncated = true;
 
-/* =========================
-   CLOSE MEMORY LANE
-========================= */
+        parts.push("[Page " + pageNumber + "]\n" + text);
+        characterCount += text.length;
 
-document
-    .getElementById(
-        "closeMemory"
-    )
-    .addEventListener(
-        "click",
-        function() {
-
-            document
-                .getElementById(
-                    "memoryLane"
-                )
-                .classList.remove(
-                    "open"
-                );
-
+        if (characterCount >= MAX_PDF_TEXT_CHARS) {
+            truncated = true;
+            break;
         }
-    );
+    }
 
+    const text = parts.join("\n\n").trim();
 
-/* =========================
-   UPGRADE BUTTON
-========================= */
+    if (text.length < 20) {
+        throw new Error(
+            "PDF se readable text nahi mila. Ye scanned/image-only PDF ho sakti hai. " +
+            "Text-selectable PDF try karo; scanned PDF ke liye OCR ki zaroorat ho sakti hai."
+        );
+    }
 
-document
-    .getElementById(
-        "upgradeBtn"
-    )
-    .addEventListener(
-        "click",
-        function() {
+    return { text, pagesRead: pagesToRead, totalPages: pdf.numPages, truncated };
+}
 
-            alert(
-                "SamjhaDo subscription jaldi aa rahi hai bhai 💎"
-            );
+async function analyzePdf() {
+    if (pdfBusy || chatBusy || photoBusy) return;
 
+    if (!selectedPdf) {
+        setStatus("pdfStatus", "Please choose a PDF first.");
+        return;
+    }
+
+    if (selectedPdf.size > MAX_PDF_BYTES) {
+        setStatus("pdfStatus", "PDF upload limit 2 MB hai.");
+        return;
+    }
+
+    if (!currentSessionId) setCurrentSessionId(newId());
+
+    const question = $("pdfQuestion").value.trim() ||
+        "Explain this PDF in simple language. Highlight its key points and important figures.";
+
+    pdfBusy = true;
+    setButtonsBusy();
+    $("analyzePdfBtn").textContent = "Reading PDF...";
+    addMessage("📄 " + selectedPdf.name + "\n" + question, "user");
+
+    if (currentChatTitle === "New Conversation") setChatTitle(question);
+
+    const loading = addMessage("", "ai");
+    setThinking(loading, "Reading your PDF");
+
+    try {
+        const extracted = await extractPdfText(selectedPdf);
+
+        setThinking(loading, "Analyzing the extracted text");
+
+        const response = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: question,
+                documentText: extracted.text,
+                documentSize: selectedPdf.size,
+                sessionId: currentSessionId,
+                visitorId: getVisitorId()
+            })
+        });
+
+        const data = await readResponse(response);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "PDF analysis failed.");
         }
-    );
 
+        if (data.sessionId) setCurrentSessionId(data.sessionId);
+
+        let answer = data.response || "AI ne response nahi diya.";
+
+        if (extracted.truncated) {
+            answer += "\n\nNote: This PDF was long, so only a limited amount of text was analyzed. Pages read: " +
+                extracted.pagesRead + " of " + extracted.totalPages + ".";
+        }
+
+        loading.innerHTML = formatText(answer);
+        $("chatStatus").textContent = "PDF analysis complete";
+        setStatus("pdfStatus", "PDF analysis complete.");
+    } catch (error) {
+        console.error("PDF analysis failed:", error);
+        loading.textContent = error.message || "Could not analyze this PDF.";
+        setStatus("pdfStatus", error.message || "PDF analysis failed.");
+    } finally {
+        pdfBusy = false;
+        $("analyzePdfBtn").textContent = "✦ Analyze PDF";
+        setButtonsBusy();
+    }
+}
+
+$("analyzePdfBtn").addEventListener("click", analyzePdf);
 
 /* =========================
    START APP
 ========================= */
-
-setCurrentSessionId(
-    getCurrentSessionId()
-);
-
+setCurrentSessionId(getCurrentSessionId());
+clearChatUI();
 loadCurrentChat();
-
 loadPhotoUsage();
-
 </script>
-
 </body>
 </html>
